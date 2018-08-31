@@ -47,11 +47,14 @@ class AuthController extends Controller {
             return $this->response->error(["error", "Something went wrong."]);
         }
 
+
         $email = $request["email"];
 
         $user = User::where('email', $email)->with('role')->first();
-
-
+      //return  $temp = User::where('id',$user['id'])->update(['remember_token'=> $token]);
+      $user['remember_token']= $token;
+        $user->save();
+        // return $user;
         if ($user) {
           $record = UserDeviceAssoc::where('user_id', $user['id'])->latest()->first();
 

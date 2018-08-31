@@ -29,7 +29,7 @@ class User extends Authenticatable {
     );
     protected $table = 'users';
     protected $guarded = ['id', 'created_at', 'updated_at'];
-    protected $hidden = ['remember_token', 'created_at', 'updated_at','created_by','updated_by'];
+    protected $hidden = ['created_at', 'updated_at','created_by','updated_by'];
     private $errors;
 
     public function validate($data) {
