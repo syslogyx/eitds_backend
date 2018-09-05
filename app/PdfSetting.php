@@ -10,13 +10,14 @@ class PdfSetting extends Model
     protected $table = 'pdf_settings';
 
     protected $fillable = [
-        'logo', 'header_heading',"footer_heading",'status'
+        'logo', 'header_heading',"footer_heading",'status','selected_columns'
     ];
     private $rules = array(
         'header_heading' => 'required',
         'logo' => 'required',
         'status' => 'required',
-        'footer_heading' => 'required'
+        'footer_heading' => 'required',
+        'selected_columns'=>'required'
     );
 
     protected $guarded = ['id', 'created_at', 'updated_at'];

@@ -50,6 +50,7 @@ $api->version("v1", function($api) {
     $api->post("add/testCaseResult", "App\Http\Controllers\UserProductController@addTestCaseResult");
     $api->get("get/productsByUserId/{id}", "App\Http\Controllers\UserProductController@getProductsByUserId");
     $api->post("get/productHistoryByDateAndProductId", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductId");
+    $api->post("get/productHistoryByDateAndProductIdNew", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductIdNew");
     $api->get('report/download/{userId}/{date}/{productId}/{type}','App\Http\Controllers\UserProductController@download');
     // role related api
     $api->get("get/roles", "App\Http\Controllers\RoleController@getRoles");
@@ -59,6 +60,7 @@ $api->version("v1", function($api) {
     $api->get("get/pdfSettings", "App\Http\Controllers\PdfSettingController@getPdfSettings");
     $api->post("change/pdfSettingStatus", "App\Http\Controllers\PdfSettingController@changePdfSettingStatus");
     $api->get("get/activeStatusPdfSetting", "App\Http\Controllers\PdfSettingController@getActiveStatusPdfSetting");
+    $api->get("get/columnList", "App\Http\Controllers\PdfColumnTableController@getColumnList");
 
 });
 

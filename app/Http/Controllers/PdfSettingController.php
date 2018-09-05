@@ -42,6 +42,7 @@ class PdfSettingController extends Controller
          $posted_data['logo'] =time().'.'.$image->getClientOriginalExtension();
          $posted_data['header_heading']=$request['header_heading'];
          $posted_data['footer_heading']=$request['footer_heading'];
+         $posted_data['selected_columns']=$request['selected_columns'];
          $posted_data['status']='ACTIVE';
         if ($object->validate($posted_data)) {
             $model = PdfSetting::create($posted_data);
@@ -51,10 +52,11 @@ class PdfSettingController extends Controller
                 PdfSetting::where('id','!=',$model['id'])->update(['status'=>'INACTIVE']);
                 return response()->json(['status_code' => 200, 'message' => 'PDF setting completed successfully', 'data' => $model]);
             }else{
-              throw new \Dingo\Api\Exception\StoreResourceFailedException('PDF setting not completed.');
+                return response()->json(['status_code' => 402, 'message' => 'PDF setting completed successfully']);
+
             }
        } else {
-           throw new \Dingo\Api\Exception\StoreResourceFailedException('PDF setting not completed.',$object->errors());
+           return response()->json(['status_code' => 402, 'message' => 'PDF setting completed successfully']);
        }
 
 
@@ -74,7 +76,7 @@ class PdfSettingController extends Controller
       if(count($model)>0){
           return response()->json(['status_code' => 200, 'message' => 'PDF setting List', 'data' => $model]);
       }else{
-        throw new \Dingo\Api\Exception\StoreResourceFailedException('No record found..!');
+        return response()->json(['status_code' => 404, 'message' => 'No record found..!']);
       }
 
     }
@@ -90,7 +92,8 @@ class PdfSettingController extends Controller
           }
           return response()->json(['status_code' => 200, 'message' => 'PDF setting status change successfully', 'data' => $model]);
       }else{
-        throw new \Dingo\Api\Exception\StoreResourceFailedException('No record found..!');
+          return response()->json(['status_code' => 404, 'message' => 'No record found..!']);
+
       }
 
     }
