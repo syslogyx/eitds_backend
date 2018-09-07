@@ -49,55 +49,10 @@ tr {
   width:50px;
 }
 </style>
-<div>
-          <table class="table table-condensed table-hover table-responsive">
-              <thead class="thead-default">
-                 @if($pdfSettingData !='')
-                  <tr>
-                      <!-- <th style="text-align: center;" colspan="2"><img id='logo' style="height: 50px;width:50px;" src="{{ public_path('img/'.@$pdfSettingData->logo) }}"> </th> -->
-                      <th style="text-align: center;" colspan="13"><b>{{ @$pdfSettingData->header_heading }}</b></th>
-                  </tr>
-                @endif
-                  <tr>
-                      <!-- <th style="text-align: center;">User</th>
-                      <th style="text-align: center;">Device</th> -->
-                      <th style="text-align: center;">Product</th>
-                      <th style="text-align: center;">Mode</th>
-                      <th style="text-align: center;">Test Case</th>
-                      <th style="text-align: center;">Test Point 3 V</th>
-                      <th style="text-align: center;">Test Point 3 T</th>
-                      <th style="text-align: center;">Test Point 4 V</th>
-                      <th style="text-align: center;">Test Point 4 T</th>
-                      <th style="text-align: center;">Test Point 4 P L</th>
-                      <th style="text-align: center;">Test Point 4 P H</th>
-                      <th style="text-align: center;">Status</th>
-                      <th style="text-align: center;">Date</th>
-                  </tr>
-              </thead>
-              <tbody>
-                   @foreach($productList as $data)
-                  <tr>
 
-                      <!-- <td style="text-align: center;" >{{ $data->username }}</td>
-                      <td style="text-align: center;" >{{ $data->device_id }}</td> -->
-                      <td style="text-align: center;" >{{ $data->product_id }}</td>
-                      <td style="text-align: center;" >{{ $data->mode }}</td>
-                      <td style="text-align: center;" >{{ $data->test_case }}</td>
-                      <td style="text-align: center;" >{{ $data->test_point_3_voltage }}</td>
-                      <td style="text-align: center;" >{{ $data->test_point_3_time }}</td>
-                      <td style="text-align: center;" >{{ $data->test_point_4_voltage }}</td>
-                      <td style="text-align: center;" >{{ $data->test_point_4_time }}</td>
-                      <td style="text-align: center;" >{{ $data->test_point_4_pulse_low }}</td>
-                      <td style="text-align: center;" >{{ $data->test_point_4_pulse_high }}</td>
-                      <td style="text-align: center;" >{{ $data->status }}</td>
-                      <td style="text-align: center;" >{{ $data->date}}</td>
-                      <!-- <td></td> -->
-                  </tr>
-                  @endforeach
+<?php
+$data = json_encode($finalResponse);
+$data = json_decode($data);
 
-              </tbody>
-          </table>
-          <div class="row col-sm-12" style="padding-right: 0px;">
-          <ul id="pagination-sec1" class="pagination-sm" style="float: right;margin-top: 5px;margin-bottom: 45px"></ul>
-      </div>
-      </div>
+?>
+{{$data->original->finalResponse}}

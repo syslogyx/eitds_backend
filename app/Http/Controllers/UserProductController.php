@@ -15,6 +15,8 @@ use App\Pdf_column_table;
 use Config;
 use PDF;
 use Excel;
+use \stdClass;
+
 class UserProductController extends Controller
 {
     /**
@@ -60,13 +62,15 @@ class UserProductController extends Controller
           $test_case='Test_Case_'.$json['test_case'];
           $mode=Mode::where('id',$json['mode'])->pluck('description')->first();
 
-          $condition=$FIXED_COL[$test_case]['Mode'][$mode]['Excepted'];
+          $condition=$FIXED_COL[$test_case]['Mode'][$mode];
 
 
           // $json=this->checkStatus($condition,$json);
           // print_r($condition);
           // die();
 
+           return $this->checkStatus($condition,$json);
+          die();
           $json['status']=$posted_data['STAT'];
 
           $tempdate=new DateTime();
@@ -87,18 +91,80 @@ class UserProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function checkStatus($condition,$json)
+    public function checkStatus($obj,$json)
     {
+      $status='1';
+      $notOkColumn=array();
+      $condition=$obj['Excepted'];
       foreach ($condition as $key => $value) {
-        if($value!='' &&  $value!=0){
-          // if(){
-          //   $json['status']=1;
-          // }else{
-          //   $json['status']=2;
-          // }
+        $len=explode("-",$value);
+        if($key=='test_point_3_time' || $key=='test_point_4_time'){
+          if(count($len)==1){
+            if($len[0]>0){
+              if($json[$key] < $len[0] || $json[$key] > ($len[0]+$obj['Time (ms)']) ){
+                $status='2';
+                array_push($notOkColumn,$key);
+              }
+            }else{
+              if($json[$key] > 0 || $json[$key] < 0){
+                $status='2';
+                array_push($notOkColumn,$key);
+              }
+            }
+          }else{
+            if($json[$key] < ($len[0] - $obj['Time (ms)']) || $json[$key] > ($len[1] + $obj['Time (ms)'])  ){
+              $status='2';
+              array_push($notOkColumn,$key);
+            }
+          }
+        }else if($key=='test_point_1_voltage' || $key=='test_point_3_voltage'  || $key=='test_point_4_voltage' || $key=='test_point_7_V' || $key=='test_point_7_V2'){
+
+          if($len[0]==0){
+            if($json[$key] > 0 || $json[$key] < 0){
+              $status='2';
+              array_push($notOkColumn,$key);
+            }
+          }elseif($json[$key] < ($len[0] - $obj['Voltage (V)']) || $json[$key] > ($len[0] + $obj['Voltage (V)'])  ){
+              $status='2';
+              array_push($notOkColumn,$key);
+          }
+        }else if($key=='number_of_pulse'){
+            if($len[0]>=0){
+              if($len[0]!=$json[$key]){
+                  $status='2';
+                  array_push($notOkColumn,$key);
+              }elseif($len[0]==$json[$key]){
+                if($json['test_point_4_pulse_high']!=$condition['test_point_4_pulse_high']){
+                  $status='2';
+                  array_push($notOkColumn,'test_point_4_pulse_high');
+                }
+                if($json['test_point_4_pulse_low']!=$condition['test_point_4_pulse_low']){
+                  $status='2';
+                  array_push($notOkColumn,'test_point_4_pulse_low');
+                }
+              }elseif($len[0]=='!0'){
+                $highPulse=explode("-",$json['test_point_4_pulse_high']);
+                $lowPulse=explode("-",$json['test_point_4_pulse_low']);
+              }
+
+            }else {
+              $status='2';
+              array_push($notOkColumn,$key);
+            }
         }
 
+        $json['status']=$status;
+        $json['not_ok_column']=implode(",",$notOkColumn);
+        // if($value!='' &&  $value!=0){
+        //   // if(){
+        //   //   $json['status']=1;
+        //   // }else{
+        //   //   $json['status']=2;
+        //   // }
+        // }
+
       }
+      // die();
       return $json;
     }
 
@@ -272,9 +338,6 @@ class UserProductController extends Controller
                   }
 
                 }
-
-
-
                 foreach ($finalResponse as $k => $v) {
                   foreach ( $v as $k2 => $v2) {
                     $FIXED_COL=Config::get('constants.FIXED_COL');
@@ -289,8 +352,26 @@ class UserProductController extends Controller
                     $finalResponse[$k][$k2]=$FIXED_COL;
                   }
                 }
-                // die();
-               return response()->json(['status_code' => 200, 'message' => 'Product list', 'data' => $finalResponse]);
+                  $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
+                  $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
+                  $selectedColumns = explode(",",$pdfSettingData->selected_columns);
+                  $pdfColumnTable=Pdf_column_table::get();
+
+
+                  for ($y = 0; $y < count($pdfColumnTable); $y++) {
+                     $pdfColumnTable[$y]->status=false;
+                    for ($z = 0; $z < count($selectedColumns); $z++) {
+                      if($pdfColumnTable[$y]->id==$selectedColumns[$z]){
+                        $pdfColumnTable[$y]->status=true;
+                      }
+                    }
+                  }
+
+                  $pdfSettingData->selected_columns=$pdfColumnTable;
+
+
+
+               return response()->json(['status_code' => 200, 'message' => 'Product list', 'data' => $finalResponse,'columnList'=>$pdfSettingData]);
 
              }else{
                return response()->json(['status_code' => 404, 'message' => 'Record not found']);
@@ -303,7 +384,7 @@ class UserProductController extends Controller
     public function download($userId,$date,$productId,$type)
     {
 
-              $productList='';
+              $productList=array();
               // return $type;
               if($userId!= -1){
                   $productList = UserProduct::where("user_id",$userId);
@@ -363,6 +444,8 @@ class UserProductController extends Controller
 
 
                  $response=array();
+                 // return response()->json(['status_code' => 200, 'message' => 'Product list', 'data' => $response]);
+
                  for ($y = 0; $y < count($productIds); $y++) {
                    $temp=array($productIds[$y] => array() );
                    array_push($response,$temp);
@@ -419,11 +502,13 @@ class UserProductController extends Controller
                 $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
                 $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
                 $selectedColumns = explode(",",$pdfSettingData->selected_columns);
-                $pdfColumnTable=Pdf_column_table::whereIn('id',$selectedColumns)->get();
+                $pdfColumnTable=Pdf_column_table::get();
                 $pdfSettingData->selected_columns= $pdfColumnTable;
 
                 $now = new DateTime();
                 $now = $now->format('Y-m-d H:i:s');
+                $finalResponse=response()->json( ['finalResponse' => $finalResponse]);
+
                 if($type==='PDF'){
                   $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report/pdf', compact('finalResponse','pdfSettingData'))->setPaper('A4', 'landscape');
                   return $pdf->download('report_'.$now.'.pdf');

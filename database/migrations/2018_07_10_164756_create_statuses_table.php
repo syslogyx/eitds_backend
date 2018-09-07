@@ -24,7 +24,7 @@ class CreateStatusesTable extends Migration
             "description" => "OK"
             ),
             array(
-            "description" => "FAIL"
+            "description" => "NOT OK"
             )
         );
 
