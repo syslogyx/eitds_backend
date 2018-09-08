@@ -57,6 +57,7 @@ class UserProductController extends Controller
           $json['test_point_7_V']=$posted_data['TP7_V'];
           $json['test_point_7_V2']=$posted_data['TP7_V2'];
           $json['number_of_pulse']=$posted_data['PC'];
+          $json['token']=$posted_data['token'];
 
           $FIXED_COL=Config::get('constants.FIXED_COL');
           $test_case='Test_Case_'.$json['test_case'];
@@ -65,13 +66,8 @@ class UserProductController extends Controller
           $condition=$FIXED_COL[$test_case]['Mode'][$mode];
 
 
-          // $json=this->checkStatus($condition,$json);
-          // print_r($condition);
-          // die();
 
-           return $this->checkStatus($condition,$json);
-          die();
-          $json['status']=$posted_data['STAT'];
+          $json=$this->checkStatus($condition,$json);
 
           $tempdate=new DateTime();
           $json['date']=$tempdate->format('Y-m-d');
@@ -143,8 +139,21 @@ class UserProductController extends Controller
                   array_push($notOkColumn,'test_point_4_pulse_low');
                 }
               }elseif($len[0]=='!0'){
-                $highPulse=explode("-",$json['test_point_4_pulse_high']);
-                $lowPulse=explode("-",$json['test_point_4_pulse_low']);
+                if($json[$key]==0){
+                  $status='2';
+                  array_push($notOkColumn,$key);
+                }else{
+                  $highPulse=explode("-",$json['test_point_4_pulse_high']);
+                  $lowPulse=explode("-",$json['test_point_4_pulse_low']);
+                  for ($i=0; $i < count($highPulse); $i++) {
+                    if($highPulse[$i]!=$condition['test_point_4_pulse_high']){
+                      $status='2';
+                      array_push($notOkColumn,'test_point_4_pulse_high');
+                      break;
+                    }
+                  }
+                }
+
               }
 
             }else {
@@ -190,6 +199,16 @@ class UserProductController extends Controller
                return response()->json(['status_code' => 404, 'message' => 'Record not found']);
              }
 
+    }
+    public function getResult() {
+        $posted_data = Input::all();
+        $posted_data['status']=2;
+        $products= UserProduct::where($posted_data)->get();
+        if(count($products)>0){
+          return response()->json(['status_code' => 202, 'message' => 'Status', 'status' => 'NOT OK']);
+        }else{
+          return response()->json(['status_code' => 200, 'message' => 'Status', 'status' => 'OK']);
+        }
     }
 
     public function getProductHistoryByDateAndProductId() {

@@ -27,7 +27,7 @@ $api->version("v1", function($api) {
     $api->post("create/user", "App\Http\Controllers\UserController@createUser");
     $api->put("update/user", "App\Http\Controllers\UserController@updateUser");
     $api->get("get/users", "App\Http\Controllers\UserController@getUsers");
-      $api->get("get/usersnew", "App\Http\Controllers\UserController@getUsersNew");
+    $api->get("get/usersnew", "App\Http\Controllers\UserController@getUsersNew");
     $api->get("get/user/{id}", "App\Http\Controllers\UserController@getUserById");
     $api->post("login", "App\Http\Controllers\Auth\AuthController@authenticate");
     $api->post("import/users", "App\Http\Controllers\UserController@importUsers");
@@ -38,7 +38,7 @@ $api->version("v1", function($api) {
     $api->get("get/devices", "App\Http\Controllers\DeviceController@getDevices");
     $api->get("get/all/devices", "App\Http\Controllers\DeviceController@getAllDevices");
     $api->get("get/device/{id}", "App\Http\Controllers\DeviceController@getDeviceById");
-      $api->post("import/devices", "App\Http\Controllers\DeviceController@importDevices");
+    $api->post("import/devices", "App\Http\Controllers\DeviceController@importDevices");
 
     // user and device assoc api
     $api->post("assign/deviceToUser", "App\Http\Controllers\UserDeviceAssocController@assignDeviceToUser");
@@ -52,6 +52,8 @@ $api->version("v1", function($api) {
     $api->post("get/productHistoryByDateAndProductId", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductId");
     $api->post("get/productHistoryByDateAndProductIdNew", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductIdNew");
     $api->get('report/download/{userId}/{date}/{productId}/{type}','App\Http\Controllers\UserProductController@download');
+    $api->post("get/result", "App\Http\Controllers\UserProductController@getResult");
+
     // role related api
     $api->get("get/roles", "App\Http\Controllers\RoleController@getRoles");
 
@@ -61,6 +63,8 @@ $api->version("v1", function($api) {
     $api->post("change/pdfSettingStatus", "App\Http\Controllers\PdfSettingController@changePdfSettingStatus");
     $api->get("get/activeStatusPdfSetting", "App\Http\Controllers\PdfSettingController@getActiveStatusPdfSetting");
     $api->get("get/columnList", "App\Http\Controllers\PdfColumnTableController@getColumnList");
+
+
 
 });
 

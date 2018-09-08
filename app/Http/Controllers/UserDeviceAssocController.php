@@ -59,6 +59,7 @@ class UserDeviceAssocController extends BaseController {
     public function getUserIdByDeviceId($id) {
         $deviceId=Device::where("device_id",$id)->pluck('id')->first();
         $user['user_id'] = UserDeviceAssoc::where("device_id",$deviceId)->latest()->pluck('user_id')->first();
+        $user['token'] = time();
         if ($user['user_id']!=null){
           return response()->json(['status_code' => 200, 'message' => 'User info', 'data' => $user]);
         }else{
