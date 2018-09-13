@@ -57,6 +57,9 @@ $api->version("v1", function($api) {
     // role related api
     $api->get("get/roles", "App\Http\Controllers\RoleController@getRoles");
 
+    // Check product is exist or not
+    $api->post("generateId", "App\Http\Controllers\StickerController@generateId");
+
     // pdf setting related api
     $api->post("add/pdfSetting", "App\Http\Controllers\PdfSettingController@addPdfSetting");
     $api->get("get/pdfSettings", "App\Http\Controllers\PdfSettingController@getPdfSettings");

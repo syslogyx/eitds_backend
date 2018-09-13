@@ -3,10 +3,8 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
-use App\Role;
-
-class CreateRolesTable extends Migration
+use App\PdfTemp;
+class CreatePdfTempsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,23 +13,18 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('pdf_temps', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->json('data')->nullable();
             $table->timestamps();
         });
         $data = array(
             array(
-            "name" => "Admin"
-            ),
-            array(
-            "name" => "Operator"
-          ),
-          array(
-            "name" => "Sticker"
-          )
+            "data" => '{}'
+            )
         );
-          Role::insert($data);
+
+        PdfTemp::insert($data);
     }
 
     /**
@@ -41,6 +34,6 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('pdf_temps');
     }
 }

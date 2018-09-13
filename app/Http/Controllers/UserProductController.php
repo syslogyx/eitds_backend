@@ -11,11 +11,14 @@ use App\Status;
 use App\TestCase;
 use App\User;
 use App\PdfSetting;
+use App\Sticker;
+use App\series;
 use App\Pdf_column_table;
 use Config;
 use PDF;
 use Excel;
 use \stdClass;
+use App\PdfTemp;
 
 class UserProductController extends Controller
 {
@@ -65,13 +68,24 @@ class UserProductController extends Controller
 
           $condition=$FIXED_COL[$test_case]['Mode'][$mode];
 
-
-
           $json=$this->checkStatus($condition,$json);
 
           $tempdate=new DateTime();
           $json['date']=$tempdate->format('Y-m-d');
-          // return $json;
+
+          if($json['status']=='1'){
+            $d=$tempdate->format('m/Y');
+            $seriesName= series::select('series_name')->where(['month_year'=>$d])->pluck('series_name')->first();
+            $finalId=Sticker::where(['seriesName'=>$seriesName])->pluck('finalId')->last();
+
+            if($finalId!=""){
+              $finalId=str_pad($finalId+1, 6, "0", STR_PAD_LEFT);
+            }else{
+              $finalId='000001';
+            }
+            Sticker::create(['tempId'=>$json['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId]);
+
+          }
           $model=UserProduct::create($json);
           if ($model){
             return response()->json(['status_code' => 200, 'message' => 'Test case result added successfully']);
@@ -215,14 +229,14 @@ class UserProductController extends Controller
               $posted_data = Input::all();
               $productList='';
               if(isset($posted_data['user_id'])){
-                  $productList = UserProduct::where("user_id",$posted_data['user_id']);
+                  $productList = UserProduct::where(["user_id"=>$posted_data['user_id'],'status'=>$posted_data['status']]);
               }
 
               if(!isset($posted_data['date']) && !isset($posted_data['product_id'])){
                 if(isset($posted_data['user_id'])){
                     $productList = $productList->get();
                 }else{
-                    $productList=UserProduct::All();
+                    $productList=UserProduct::where(['status'=>$posted_data['status']])->get();
                 }
 
               }else{
@@ -230,21 +244,21 @@ class UserProductController extends Controller
                   if(isset($posted_data['user_id'])){
                       $productList = $productList->where("date",$posted_data['date'])->get();
                   }else{
-                      $productList=UserProduct::where("date",$posted_data['date'])->get();
+                      $productList=UserProduct::where(["date"=>$posted_data['date'],'status'=>$posted_data['status']])->get();
                   }
 
                 }elseif (!isset($posted_data['date']) && isset($posted_data['product_id'])) {
                   if(isset($posted_data['user_id'])){
                       $productList = $productList->where("product_id",$posted_data['product_id'])->get();
                   }else{
-                      $productList=UserProduct :: where("product_id",$posted_data['product_id'])->get();
+                      $productList=UserProduct :: where(["product_id"=>$posted_data['product_id'],'status'=>$posted_data['status']])->get();
                   }
 
                 }else{
                   if(isset($posted_data['user_id'])){
-                    $productList = $productList->where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
+                      $productList = $productList->where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
                   }else{
-                      $productList=UserProduct :: where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
+                      $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id'],'status'=>$posted_data['status']])->get();
                   }
 
                 }
@@ -269,17 +283,23 @@ class UserProductController extends Controller
 
     public function getProductHistoryByDateAndProductIdNew() {
               $posted_data = Input::all();
-
+              $status =!isset($posted_data['status'])?'':$posted_data['status'];
               $productList='';
-              if(isset($posted_data['user_id'])){
-                  $productList = UserProduct::where("user_id",$posted_data['user_id']);
-              }
 
+              if(isset($posted_data['user_id'])){
+                  $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
+                  if($status!=''){
+                    $productList = UserProduct::where(["user_id"=>$posted_data['user_id'],'status'=>$status]);
+                  }
+              }
               if(!isset($posted_data['date']) && !isset($posted_data['product_id'])){
                 if(isset($posted_data['user_id'])){
                     $productList = $productList->get();
                 }else{
-                    $productList=UserProduct::All();
+                      $productList=UserProduct::All();
+                      if($status!=''){
+                        $productList=UserProduct::where(['status'=>$status])->get();
+                      }
                 }
 
               }else{
@@ -287,21 +307,30 @@ class UserProductController extends Controller
                   if(isset($posted_data['user_id'])){
                       $productList = $productList->where("date",$posted_data['date'])->get();
                   }else{
-                      $productList=UserProduct::where("date",$posted_data['date'])->get();
+                    $productList=UserProduct::where(["date"=>$posted_data['date']])->get();
+                    if($status!=''){
+                      $productList=UserProduct::where(["date"=>$posted_data['date'],'status'=>$status])->get();
+                    }
                   }
 
                 }elseif (!isset($posted_data['date']) && isset($posted_data['product_id'])) {
                   if(isset($posted_data['user_id'])){
                       $productList = $productList->where("product_id",$posted_data['product_id'])->get();
                   }else{
-                      $productList=UserProduct :: where("product_id",$posted_data['product_id'])->get();
+                    $productList=UserProduct :: where(["product_id"=>$posted_data['product_id']])->get();
+                    if($status!=''){
+                      $productList=UserProduct :: where(["product_id"=>$posted_data['product_id'],'status'=>$status])->get();
+                    }
                   }
 
                 }else{
                   if(isset($posted_data['user_id'])){
                     $productList = $productList->where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
                   }else{
-                      $productList=UserProduct :: where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
+                    $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id']])->get();
+                    if($status!=''){
+                      $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id'],'status'=>$status])->get();
+                    }
                   }
 
                 }
@@ -387,7 +416,8 @@ class UserProductController extends Controller
                   }
 
                   $pdfSettingData->selected_columns=$pdfColumnTable;
-
+                  $data['data']=json_encode($finalResponse);
+                  $temp=PdfTemp::where('id',1)->update($data);
 
 
                return response()->json(['status_code' => 200, 'message' => 'Product list', 'data' => $finalResponse,'columnList'=>$pdfSettingData]);
@@ -402,134 +432,75 @@ class UserProductController extends Controller
 
     public function download($userId,$date,$productId,$type)
     {
+               $finalResponse=PdfTemp::where(['id'=>1])->get();
+               $finalResponse = json_decode($finalResponse[0]->data,true);
+               $data = [];
+               	for($i=0; $i<count($finalResponse); $i++){
+                 $arr = [];
+                 foreach ($finalResponse[$i] as $key => $value) {
+                    $arr["project_id"] = $key;
+							      $arr["test_cases"] = [];
+                    foreach ($value as $key1 => $value1) {
+                      $value1["Mode_data"] = [];
+                      foreach ($value1 as $key2 => $value2) {
+    						  			if($key2 == "Mode"){
+                          // unset($value1[$key2]);
+                          $mode_length = sizeof($value2);
 
-              $productList=array();
-              // return $type;
-              if($userId!= -1){
-                  $productList = UserProduct::where("user_id",$userId);
-              }
-
-              if($date== -1 && $productId == -1 ){
-                if($userId!= -1){
-                    $productList = $productList->get();
-                }else{
-                    $productList=UserProduct::All();
-                }
-
-              }else{
-                if($date != -1 && $productId == -1){
-                  if(isset($posted_data['user_id'])){
-                      $productList = $productList->where("date",$date)->get();
-                  }else{
-                      $productList=UserProduct::where("date",$date)->get();
-                  }
-
-                }elseif ($date == -1 && $productId != -1) {
-                  if($userId!= -1){
-                      $productList = $productList->where("product_id",$productId)->get();
-                  }else{
-                      $productList=UserProduct :: where("product_id",$productId)->get();
-                  }
-
-                }else{
-                  if($userId!= -1){
-                    $productList = $productList->where("date",$date)->where("product_id",$productId)->get();
-                  }else{
-                      $productList=UserProduct :: where("date",$date)->where("product_id",$productId)->get();
-                  }
-
-                }
-              }
+										      $value1["mode_length"] = $mode_length;
+                          foreach ($value2 as $key3 => $value3) {
+                            $value3["mode_name"] = $key3;
+    											  array_push($value1["Mode_data"],$value3);
+                            foreach ($value3 as $key4 => $value4) {
+    												  if($key4 == "Actual"){
+                                foreach ($value4 as $key5 => $value5) {
+                                  $value5["not_ok_columns"] = [];
 
 
-             if (count($productList)>0){
+    														  $value5["not_ok_columns"] = explode(',', $value5["not_ok_column"]);
+    													 }
+    												 }
+    											 }
+    										 }
+    						  			}
+    						  		}
+                      array_push($arr["test_cases"],$value1);
+                   }
+               }
+               array_push($data,$arr);
+             }
+              $finalResponse = $data;
+               // $finalResponse=json_decode($finalResponse[0]->data,true);
+               $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
+               $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
+               $selectedColumns = explode(",",$pdfSettingData->selected_columns);
+               $pdfColumnTable=Pdf_column_table::get();
 
-               $productIds= array($productId);
-               if ($productId==-1){
-                  $productIds= UserProduct::distinct()->pluck('product_id');
+
+               for ($y = 0; $y < count($pdfColumnTable); $y++) {
+                  $pdfColumnTable[$y]->status=false;
+                 for ($z = 0; $z < count($selectedColumns); $z++) {
+                   if($pdfColumnTable[$y]->id==$selectedColumns[$z]){
+                     $pdfColumnTable[$y]->status=true;
+                   }
+                 }
                }
 
-               for ($x = 0; $x < count($productList); $x++) {
-                    $temp=$productList[$x];
+               $pdfSettingData->selected_columns=$pdfColumnTable;
+               $now = new DateTime();
+               $now = $now->format('Y-m-d H:i:s');
+               view()->share(compact('finalResponse','pdfSettingData'));
+               $pdf = PDF::loadView('report/pdf')->setPaper('A4', 'landscape');
+               return $pdf->download('report_'.$now.'.pdf');
+               // return $pdf->download('transaction_details.pdf');
 
-                    $productList[$x]->mode=Mode::where('id',$temp["mode"])->pluck('description')->first();
-                    $productList[$x]->test_case=TestCase::where('id',$temp["test_case"])->pluck('description')->first();
-                    $productList[$x]->status=Status::where('id',$temp["status"])->pluck('description')->first();
-                    unset($productList[$x]->updated_at);
-                    unset($productList[$x]->created_at);
-
-
-                }
-
-
-                 $response=array();
-                 // return response()->json(['status_code' => 200, 'message' => 'Product list', 'data' => $response]);
-
-                 for ($y = 0; $y < count($productIds); $y++) {
-                   $temp=array($productIds[$y] => array() );
-                   array_push($response,$temp);
-                   for ($z = 0; $z < count($productList); $z++) {
-                     if($productIds[$y]==$productList[$z]->product_id){
-                       array_push($response[$y][$productIds[$y]],$productList[$z]);
-                     }
-                    }
-                 }
-                 $finalResponse=array();
-                 $count=0;
-                 foreach ($response as $key => $value) {
-                   foreach ( $value as $k => $v) {
-                     $temp=array($k => array() );
-                     array_push($finalResponse,$temp);
-                     foreach ( $finalResponse[$count] as $k2 => $v2) {
-                       $testCases=UserProduct::distinct()->select('test_case')->where('product_id', '=', $k2)->pluck('test_case');
-                       for ($y = 0; $y < count($testCases); $y++) {
-                         $temp2=array('Test_Case_'.$testCases[$y] => array('Timer Mode'=>array(),'Impact Mode'=>array(),'Timer & Impact Mode'=>array()) );
-                         array_push($v2,$temp2);
-                         for ($z = 0; $z < count($v); $z++) {
-                           if($testCases[$y]==$v[$z]->test_case){
-                               foreach ( $v2[$y]['Test_Case_'.$testCases[$y]] as $dk => $dv) {
-                                 if($dk==$v[$z]->mode){
-                                     array_push($v2[$y]['Test_Case_'.$testCases[$y]][$dk],$v[$z]);
-                                 }
-                               }
-                           }
-                          }
-                       }
-                       $finalResponse[$count++][$k]=$v2;
-                     }
-                   }
-
-                 }
-
-
-
-                 foreach ($finalResponse as $k => $v) {
-                   foreach ( $v as $k2 => $v2) {
-                     $FIXED_COL=Config::get('constants.FIXED_COL');
-                     foreach ( $v2 as $k3 => $v3) {
-                       foreach ( $v3 as $k4 => $v4) {
-                         $FIXED_COL[$k4]['ActualLength']=count($v3[$k4]['Timer Mode'])+count($v3[$k4]['Impact Mode'])+count($v3[$k4]['Timer & Impact Mode']);
-                         $FIXED_COL[$k4]['Mode']['Timer Mode']['Actual']=$v3[$k4]['Timer Mode'];
-                         $FIXED_COL[$k4]['Mode']['Impact Mode']['Actual']=$v3[$k4]['Impact Mode'];
-                         $FIXED_COL[$k4]['Mode']['Timer & Impact Mode']['Actual']=$v3[$k4]['Timer & Impact Mode'];
-                       }
-                     }
-                     $finalResponse[$k][$k2]=$FIXED_COL;
-                   }
-                 }
-
-                $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
-                $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
-                $selectedColumns = explode(",",$pdfSettingData->selected_columns);
-                $pdfColumnTable=Pdf_column_table::get();
-                $pdfSettingData->selected_columns= $pdfColumnTable;
-
+               return view('report/pdf')->with('finalResponse', $finalResponse[0]->data);
                 $now = new DateTime();
                 $now = $now->format('Y-m-d H:i:s');
-                $finalResponse=response()->json( ['finalResponse' => $finalResponse]);
+
 
                 if($type==='PDF'){
-                  $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report/pdf', compact('finalResponse','pdfSettingData'))->setPaper('A4', 'landscape');
+                  $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->view('report/pdf')->with('finalResponse',json_decode($finalResponse[0]->data,true))->setPaper('A4', 'landscape');
                   return $pdf->download('report_'.$now.'.pdf');
                 }elseif ($type==='CSV') {
                   // Generate and return the spreadsheet
@@ -547,9 +518,7 @@ class UserProductController extends Controller
 
                    })->download('csv');
                 }
-             }else{
-               return response()->json(['status_code' => 404, 'message' => 'Record not found']);
-             }
+
 
     }
     /**
