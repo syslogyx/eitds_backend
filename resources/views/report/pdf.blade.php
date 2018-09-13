@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{{URL::asset('assets/plugin/angular/angular.min.js')}}"></script>
+
 <style>
 
 .table {

@@ -35,6 +35,23 @@ class StickerController extends Controller
          }
      }
 
+     public function download()
+     {
+       $posted_data = Input::all();
+
+      $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->where('id', '>=', $posted_data['startIndex'])->limit($posted_data['limit'])->get();
+      // $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->get();
+        if (count($object)>0) {
+          $now = new DateTime();
+          $now = $now->format('Y-m-d H:i:s');
+          view()->share(compact('object'));
+          $pdf = PDF::loadView('report/sticker')->setPaper('A4', 'landscape');
+          return $pdf->download('sticker_'.$now.'.pdf');
+        } else {
+           return response()->json(['status_code' => 203, 'message' => 'Product is not exist']);
+        }
+     }
+
     /**
      * Store a newly created resource in storage.
      *
