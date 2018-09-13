@@ -132,14 +132,14 @@ class UserProductController extends Controller
                   $status='2';
                   array_push($notOkColumn,$key);
               }elseif($len[0]==$json[$key]){
-                if($json['test_point_4_pulse_high']!=$condition['test_point_4_pulse_high']){
-                  $status='2';
-                  array_push($notOkColumn,'test_point_4_pulse_high');
-                }
-                if($json['test_point_4_pulse_low']!=$condition['test_point_4_pulse_low']){
-                  $status='2';
-                  array_push($notOkColumn,'test_point_4_pulse_low');
-                }
+                // if($json['test_point_4_pulse_high']!=$condition['test_point_4_pulse_high']){
+                //   $status='2';
+                //   array_push($notOkColumn,'test_point_4_pulse_high');
+                // }
+                // if($json['test_point_4_pulse_low']!=$condition['test_point_4_pulse_low']){
+                //   $status='2';
+                //   array_push($notOkColumn,'test_point_4_pulse_low');
+                // }
               }elseif($len[0]=='!0'){
                 if($json[$key]==0){
                   $status='2';
