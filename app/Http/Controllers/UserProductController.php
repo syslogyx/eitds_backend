@@ -73,19 +73,7 @@ class UserProductController extends Controller
           $tempdate=new DateTime();
           $json['date']=$tempdate->format('Y-m-d');
 
-          if($json['status']=='1'){
-            $d=$tempdate->format('m/Y');
-            $seriesName= series::select('series_name')->where(['month_year'=>$d])->pluck('series_name')->first();
-            $finalId=Sticker::where(['seriesName'=>$seriesName])->pluck('finalId')->last();
 
-            if($finalId!=""){
-              $finalId=str_pad($finalId+1, 6, "0", STR_PAD_LEFT);
-            }else{
-              $finalId='000001';
-            }
-            Sticker::create(['tempId'=>$json['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId]);
-
-          }
           $model=UserProduct::create($json);
           if ($model){
             return response()->json(['status_code' => 200, 'message' => 'Test case result added successfully']);
@@ -218,10 +206,28 @@ class UserProductController extends Controller
         $posted_data = Input::all();
         $posted_data['status']=2;
         $products= UserProduct::where($posted_data)->get();
+
         if(count($products)>0){
+
           return response()->json(['status_code' => 202, 'message' => 'Status', 'status' => 'NOT OK']);
         }else{
-          return response()->json(['status_code' => 200, 'message' => 'Status', 'status' => 'OK']);
+            $tempdate=new DateTime();
+            $d=$tempdate->format('m/Y');
+            $seriesName= series::select('series_name')->where(['month_year'=>$d])->pluck('series_name')->first();
+            $finalId=Sticker::where(['seriesName'=>$seriesName])->pluck('finalId')->last();
+            $id=Sticker::all()->pluck('id')->last();
+            if($finalId!=""){
+              $finalId=str_pad($finalId+1, 6, "0", STR_PAD_LEFT);
+              $id=$id+1;
+            }else{
+              $finalId='000001';
+              $id=1;
+            }
+            $exist=Sticker::where(['tempId'=>$posted_data['product_id']])->get();
+            if(count($exist)==0){
+              Sticker::create(['tempId'=>$posted_data['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId,'id'=>$id]);
+            }
+            return response()->json(['status_code' => 200, 'message' => 'Status', 'status' => 'OK']);
         }
     }
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\series;
 use Illuminate\Http\Request;
-
+use DateTime;
 class SeriesController extends Controller
 {
     /**
@@ -44,9 +44,13 @@ class SeriesController extends Controller
      * @param  \App\series  $series
      * @return \Illuminate\Http\Response
      */
-    public function show(series $series)
+    public function getSeriesList()
     {
-        //
+        $tempdate=new DateTime();
+        $d=$tempdate->format('m/Y');
+        $id= series::where(['month_year'=>$d])->pluck('id')->first();
+        $data= series::where('id', '<', ($id+2))->get();
+        return $data;
     }
 
     /**

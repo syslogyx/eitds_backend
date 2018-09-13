@@ -50,7 +50,7 @@ tr {
   width:50px;
 }
 body{
-  font-size: 7px;
+  font-size: 9px;
 }
 thead { display: table-row-group; }
 

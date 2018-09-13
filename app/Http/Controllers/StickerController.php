@@ -26,22 +26,11 @@ class StickerController extends Controller
      */
      public function generateId() {
          $posted_data = Input::all();
-         $object = new Sticker();
-         if ($object->validate($posted_data)) {
-             $model = UserProduct::where('product_id',$posted_data['product_id'])->get();
-             if(count($model)>0){
-                $modelUserProduct = Sticker::where('product_id',$posted_data['product_id'])->get();
-                $res=$modelUserProduct;
-                if(count($modelUserProduct)==0){
-                  $res = Sticker::create($posted_data);
-                }
-                return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $res]);
-             }else{
-                return response()->json(['status_code' => 404, 'message' => 'Product is not exist']);
-             }
-
+         $object = Sticker::where('tempId',$posted_data['product_id'])->get();;
+         if (count($object)>0) {
+            return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $object]);
          } else {
-              return response()->json(['status_code' => 203, 'message' => 'Validation Error','error':$object->errors()]);
+            return response()->json(['status_code' => 203, 'message' => 'Product is not exist']);
 
          }
      }
@@ -52,9 +41,17 @@ class StickerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function getStickerList()
     {
-        //
+         $posted_data = Input::all();
+
+        $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->where('id', '>=', $posted_data['startIndex'])->limit($posted_data['limit'])->get();
+        // $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->get();
+        if (count($object)>0) {
+           return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $object]);
+        } else {
+           return response()->json(['status_code' => 203, 'message' => 'Product is not exist']);
+        }
     }
 
     /**
