@@ -60,7 +60,7 @@ $api->version("v1", function($api) {
     // Check product is exist or not
     $api->post("generateId", "App\Http\Controllers\StickerController@generateId");
     $api->post("get/stickerList", "App\Http\Controllers\StickerController@getStickerList");
-    $api->post('stickers/download','App\Http\Controllers\StickerController@download');
+    $api->get('stickers/download','App\Http\Controllers\StickerController@download');
 
     $api->get("get/seriesList", "App\Http\Controllers\SeriesController@getSeriesList");
 

@@ -6,7 +6,9 @@ use App\Sticker;
 use App\UserProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
-
+use DateTime;
+use PDF;
+use App\PdfTemp;
 class StickerController extends Controller
 {
     /**
@@ -37,10 +39,7 @@ class StickerController extends Controller
 
      public function download()
      {
-       $posted_data = Input::all();
-
-      $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->where('id', '>=', $posted_data['startIndex'])->limit($posted_data['limit'])->get();
-      // $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->get();
+      $object = PdfTemp::where(['id'=>2])->get();
         if (count($object)>0) {
           $now = new DateTime();
           $now = $now->format('Y-m-d H:i:s');
@@ -48,7 +47,7 @@ class StickerController extends Controller
           $pdf = PDF::loadView('report/sticker')->setPaper('A4', 'landscape');
           return $pdf->download('sticker_'.$now.'.pdf');
         } else {
-           return response()->json(['status_code' => 203, 'message' => 'Product is not exist']);
+          return response()->json(['status_code' => 203, 'message' => 'Sticker list not found']);
         }
      }
 
@@ -64,6 +63,8 @@ class StickerController extends Controller
 
         $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->where('id', '>=', $posted_data['startIndex'])->limit($posted_data['limit'])->get();
         // $object = Sticker::where(['seriesName'=>$posted_data['seriesName']])->get();
+        $data['data']=$object;
+        PdfTemp::where('id',2)->update($data);
         if (count($object)>0) {
            return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $object]);
         } else {

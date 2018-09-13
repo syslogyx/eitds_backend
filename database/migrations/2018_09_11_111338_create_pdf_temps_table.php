@@ -21,6 +21,9 @@ class CreatePdfTempsTable extends Migration
         $data = array(
             array(
             "data" => '{}'
+            ),
+            array(
+            "data" => '{}'
             )
         );
 
