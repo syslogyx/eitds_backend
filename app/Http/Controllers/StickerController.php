@@ -32,7 +32,7 @@ class StickerController extends Controller
          if (count($object)>0) {
             return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $object]);
          } else {
-            return response()->json(['status_code' => 203, 'message' => 'Product is not exist']);
+            return response()->json(['status_code' => 203, 'message' => 'Product does not exist']);
 
          }
      }
@@ -40,10 +40,25 @@ class StickerController extends Controller
      public function download()
      {
       $object = PdfTemp::where(['id'=>2])->get();
-        if (count($object)>0) {
+      $list = json_decode($object[0]->data,true);
+      $json=[];
+      $pageSize=20;
+      $count=count($list);
+      $pages=ceil($count/$pageSize);
+            for ($i = 0; $i < $pages;$i++) {
+              $tempArr=[];
+              for ($j = ($i*$pageSize); $j < (($i*$pageSize)+$pageSize); $j++) {
+                if($j<$count){
+                  array_push($tempArr,$list[$j]);
+                }
+              }
+              array_push($json,$tempArr);
+            }
+            // return count($json[0]);
+        if ($count>0) {
           $now = new DateTime();
           $now = $now->format('Y-m-d H:i:s');
-          view()->share(compact('object'));
+          view()->share(compact('json'));
           $pdf = PDF::loadView('report/sticker')->setPaper('A4', 'landscape');
           return $pdf->download('sticker_'.$now.'.pdf');
         } else {
@@ -68,7 +83,7 @@ class StickerController extends Controller
         if (count($object)>0) {
            return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $object]);
         } else {
-           return response()->json(['status_code' => 203, 'message' => 'Product is not exist']);
+           return response()->json(['status_code' => 203, 'message' => 'Product does not exist']);
         }
     }
 
