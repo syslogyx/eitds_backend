@@ -293,7 +293,7 @@ class UserProductController extends Controller
               $productList='';
 
               if(isset($posted_data['user_id'])){
-                  $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
+                $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
                   if($status!=''){
                     $productList = UserProduct::where(["user_id"=>$posted_data['user_id'],'status'=>$status]);
                   }
@@ -342,9 +342,14 @@ class UserProductController extends Controller
                 }
               }
 
-
+  // return  $productList;
              if (count($productList)>0){
-                $productIds= UserProduct::distinct()->pluck('product_id');
+               if(!isset($posted_data['user_id'])){
+                  $productIds = UserProduct::distinct()->pluck('product_id');
+               }else{
+                  $productIds = UserProduct::where("user_id",$posted_data['user_id'])->distinct()->pluck('product_id');
+               }
+
                 if (isset($posted_data['product_id'])){
                   $productIds= array($posted_data['product_id']);
                 }
