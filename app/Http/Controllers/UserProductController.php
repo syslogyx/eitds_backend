@@ -99,7 +99,7 @@ class UserProductController extends Controller
         if($key=='test_point_3_time' || $key=='test_point_4_time'){
           if(count($len)==1){
             if($len[0]>0){
-              if($json[$key] < $len[0] || $json[$key] > ($len[0]+$obj['Time (ms)']) ){
+              if($json[$key] < ($len[0]-$obj['Time (ms)']) || $json[$key] > ($len[0]+$obj['Time (ms)']) ){
                 $status='2';
                 array_push($notOkColumn,$key);
               }
@@ -118,7 +118,7 @@ class UserProductController extends Controller
         }else if($key=='test_point_1_voltage' || $key=='test_point_3_voltage'  || $key=='test_point_4_voltage' || $key=='test_point_7_V' || $key=='test_point_7_V2'){
 
           if($len[0]==0){
-            if($json[$key] > 0 || $json[$key] < 0){
+            if($json[$key] > ($len[0] + $obj['Voltage (V)']) ){
               $status='2';
               array_push($notOkColumn,$key);
             }
