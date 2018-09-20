@@ -166,13 +166,7 @@ class UserProductController extends Controller
 
         $json['status']=$status;
         $json['not_ok_column']=implode(",",$notOkColumn);
-        // if($value!='' &&  $value!=0){
-        //   // if(){
-        //   //   $json['status']=1;
-        //   // }else{
-        //   //   $json['status']=2;
-        //   // }
-        // }
+
 
       }
       // die();
@@ -291,56 +285,57 @@ class UserProductController extends Controller
               $posted_data = Input::all();
               $status =!isset($posted_data['status'])?'':$posted_data['status'];
               $productList='';
+              $productList=UserProduct::where($posted_data)->get();
 
-              if(isset($posted_data['user_id'])){
-                $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
-                  if($status!=''){
-                    $productList = UserProduct::where(["user_id"=>$posted_data['user_id'],'status'=>$status]);
-                  }
-              }
-              if(!isset($posted_data['date']) && !isset($posted_data['product_id'])){
-                if(isset($posted_data['user_id'])){
-                    $productList = $productList->get();
-                }else{
-                      $productList=UserProduct::All();
-                      if($status!=''){
-                        $productList=UserProduct::where(['status'=>$status])->get();
-                      }
-                }
-
-              }else{
-                if(isset($posted_data['date']) && !isset($posted_data['product_id'])){
-                  if(isset($posted_data['user_id'])){
-                      $productList = $productList->where("date",$posted_data['date'])->get();
-                  }else{
-                    $productList=UserProduct::where(["date"=>$posted_data['date']])->get();
-                    if($status!=''){
-                      $productList=UserProduct::where(["date"=>$posted_data['date'],'status'=>$status])->get();
-                    }
-                  }
-
-                }elseif (!isset($posted_data['date']) && isset($posted_data['product_id'])) {
-                  if(isset($posted_data['user_id'])){
-                      $productList = $productList->where("product_id",$posted_data['product_id'])->get();
-                  }else{
-                    $productList=UserProduct :: where(["product_id"=>$posted_data['product_id']])->get();
-                    if($status!=''){
-                      $productList=UserProduct :: where(["product_id"=>$posted_data['product_id'],'status'=>$status])->get();
-                    }
-                  }
-
-                }else{
-                  if(isset($posted_data['user_id'])){
-                    $productList = $productList->where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
-                  }else{
-                    $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id']])->get();
-                    if($status!=''){
-                      $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id'],'status'=>$status])->get();
-                    }
-                  }
-
-                }
-              }
+              // if(isset($posted_data['user_id'])){
+              //   $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
+              //     if($status!=''){
+              //       $productList = UserProduct::where(["user_id"=>$posted_data['user_id'],'status'=>$status]);
+              //     }
+              // }
+              // if(!isset($posted_data['date']) && !isset($posted_data['product_id'])){
+              //   if(isset($posted_data['user_id'])){
+              //       $productList = $productList->get();
+              //   }else{
+              //         $productList=UserProduct::All();
+              //         if($status!=''){
+              //           $productList=UserProduct::where(['status'=>$status])->get();
+              //         }
+              //   }
+              //
+              // }else{
+              //   if(isset($posted_data['date']) && !isset($posted_data['product_id'])){
+              //     if(isset($posted_data['user_id'])){
+              //         $productList = $productList->where("date",$posted_data['date'])->get();
+              //     }else{
+              //       $productList=UserProduct::where(["date"=>$posted_data['date']])->get();
+              //       if($status!=''){
+              //         $productList=UserProduct::where(["date"=>$posted_data['date'],'status'=>$status])->get();
+              //       }
+              //     }
+              //
+              //   }elseif (!isset($posted_data['date']) && isset($posted_data['product_id'])) {
+              //     if(isset($posted_data['user_id'])){
+              //         $productList = $productList->where("product_id",$posted_data['product_id'])->get();
+              //     }else{
+              //       $productList=UserProduct :: where(["product_id"=>$posted_data['product_id']])->get();
+              //       if($status!=''){
+              //         $productList=UserProduct :: where(["product_id"=>$posted_data['product_id'],'status'=>$status])->get();
+              //       }
+              //     }
+              //
+              //   }else{
+              //     if(isset($posted_data['user_id'])){
+              //       $productList = $productList->where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
+              //     }else{
+              //       $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id']])->get();
+              //       if($status!=''){
+              //         $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id'],'status'=>$status])->get();
+              //       }
+              //     }
+              //
+              //   }
+              // }
 
   // return  $productList;
              if (count($productList)>0){

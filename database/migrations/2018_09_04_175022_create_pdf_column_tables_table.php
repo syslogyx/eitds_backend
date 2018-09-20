@@ -52,11 +52,11 @@ class CreatePdfColumnTablesTable extends Migration
             ),
             array(
               "column_name" => "test_point_3_time",
-              "column_display_name" => "Time when Trigger Occurred (TP3_T) (sec)"
+              "column_display_name" => "TP3_T (sec)"
             ),
             array(
               "column_name" => "test_point_4_time",
-              "column_display_name" => "Time when Trigger Occurred (TP4_T)"
+              "column_display_name" => "TP4_T"
             ),
             array(
               "column_name" => "test_point_1_voltage",
@@ -97,11 +97,11 @@ class CreatePdfColumnTablesTable extends Migration
             ),
             array(
               "column_name" => "test_point_7_V",
-              "column_display_name" => "TP7 (Arming Safety) TP7_V @ 200ms (V)"
+              "column_display_name" => "TP7_V @ 200ms (V)"
             ),
             array(
               "column_name" => "test_point_7_V2",
-              "column_display_name" => "(Arming Safety) TP7_V2 @ 1.8 ms (V)"
+              "column_display_name" => "TP7_V2 @ 1.8 ms (V)"
             ),
             array(
               "column_name" => "status",

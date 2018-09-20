@@ -95,7 +95,9 @@ thead { display: table-row-group; }
             </tr>
             <tr>
               @foreach ($pdfSettingData["selected_columns"] as $key1 => $value1)
+                @if($value1["column_display_name"]!='Final Status (OK/NOT OK)')
                 <th style="text-align: center;vertical-align: middle;">{{$value1["column_display_name"]}}</th>
+                @endif
               @endforeach
             </tr>
           </thead>
@@ -103,15 +105,15 @@ thead { display: table-row-group; }
             @if(isset($value2['ActualLength']))
             <tbody class="level1">
               <tr>
-                  <td rowspan="{{($value2['mode_length'] * 2) + $value2['ActualLength'] - 2}}">TC#{{$value2['Test Case']}}</td>
-                  <td rowspan="{{($value2['mode_length'] * 2)+ $value2['ActualLength'] - 2}}">{{$value2['Test Condition']}}</td>
-                  <td rowspan="{{($value2['mode_length'] * 2)+ $value2['ActualLength'] - 2 }}">{{$value2['Valid for Modes']}}</td>
+                  <td rowspan="{{($value2['mode_length'] * 2)}}">TC#{{$value2['Test Case']}} </td>
+                  <td rowspan="{{($value2['mode_length'] * 2)}}">{{$value2['Test Condition']}}</td>
+                  <td rowspan="{{($value2['mode_length'] * 2)}}">{{$value2['Valid for Modes']}} </td>
               </tr>
               @foreach ($value2["Mode_data"] as $key3 => $value3)
                 <tr>
-                  <td rowspan="{{count($value3['Actual']) + 1}}" >{{$value3['mode_name']}}</td>
-                  <td rowspan="{{count($value3['Actual']) + 1}}" >{{(isset($value3['Time (ms)'])?$value3['Time (ms)']:0)}}</td>
-                  <td rowspan="{{count($value3['Actual']) + 1}}" >{{(isset($value3['Voltage (V)'])?$value3['Voltage (V)']:0)}}</td>
+                  <td rowspan="{{2}}" >{{$value3['mode_name']}}</td>
+                  <td rowspan="{{2}}" >{{(isset($value3['Time (ms)'])?$value3['Time (ms)']:0)}}</td>
+                  <td rowspan="{{2}}" >{{(isset($value3['Voltage (V)'])?$value3['Voltage (V)']:0)}}</td>
                   <td>Excepted</td>
                   <td> {{(isset($value3['Excepted']['test_point_3_time']) ? $value3['Excepted']['test_point_3_time'] : 0)}}</td>
                   <td> {{(isset($value3['Excepted']['test_point_4_time'])?$value3['Excepted']['test_point_4_time']:0)}}</td>
@@ -126,28 +128,30 @@ thead { display: table-row-group; }
                   <td> {{(isset($value3['Excepted']['test_point_6'])?$value3['Excepted']['test_point_6']:0)}}</td>
                   <td> {{(isset($value3['Excepted']['test_point_7_V'])?$value3['Excepted']['test_point_7_V']:0)}}</td>
                   <td> {{(isset($value3['Excepted']['test_point_7_V2'])?$value3['Excepted']['test_point_7_V2']:0)}}</td>
-                  <td> </td>
+
                   <td></td>
                 </tr>
                 @foreach ($value3["Actual"] as $key4 => $value4)
-                  <tr>
-                    <td>Actual</td>
-                    <td> {{$value4['test_point_3_time']}}</td>
-                    <td> {{$value4['test_point_4_time']}}</td>
-                    <td> {{$value4['test_point_1_voltage']}}</td>
-                    <td> {{$value4['test_point_2']}}</td>
-                    <td> {{$value4['test_point_3_voltage']}}</td>
-                    <td> {{$value4['number_of_pulse']}}</td>
-                    <td> {{$value4['test_point_4_pulse_high']}}</td>
-                    <td> {{$value4['test_point_4_pulse_low']}}</td>
-                    <td> {{$value4['test_point_4_voltage']}}</td>
-                    <td> {{$value4['test_point_5']}}</td>
-                    <td> {{$value4['test_point_6']}}</td>
-                    <td> {{$value4['test_point_7_V']}}</td>
-                    <td> {{$value4['test_point_7_V2']}}</td>
-                    <td> {{$value4['status']}}</td>
-                    <td> {{ explode(' ',$value4["created_at"])[0]}}</td>
-                  </tr>
+                  @if((count($value3["Actual"])-1)==$key4)
+                      <tr>
+                        <td>Actual</td>
+                        <td> {{$value4['test_point_3_time']}}</td>
+                        <td> {{$value4['test_point_4_time']}}</td>
+                        <td> {{$value4['test_point_1_voltage']}}</td>
+                        <td> {{$value4['test_point_2']}}</td>
+                        <td> {{$value4['test_point_3_voltage']}}</td>
+                        <td> {{$value4['number_of_pulse']}}</td>
+                        <td> {{$value4['test_point_4_pulse_high']}}</td>
+                        <td> {{$value4['test_point_4_pulse_low']}}</td>
+                        <td> {{$value4['test_point_4_voltage']}}</td>
+                        <td> {{$value4['test_point_5']}}</td>
+                        <td> {{$value4['test_point_6']}}</td>
+                        <td> {{$value4['test_point_7_V']}}</td>
+                        <td> {{$value4['test_point_7_V2']}}</td>
+
+                        <td> {{ explode(' ',$value4["created_at"])[0]}}</td>
+                      </tr>
+                  @endif
                 @endforeach
               @endforeach
             </tbody>

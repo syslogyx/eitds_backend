@@ -34,21 +34,25 @@ class DeviceController extends BaseController {
         }
     }
     public function updateDevice() {
-        $posted_data = Input::all();
+      $posted_data = Input::all();
 
-        $object = new Device();
-        if ($object->validate($posted_data)) {
-            // return $posted_data;
-            	$device = Device::where('id',$posted_data['id'])->update($posted_data);
-              if ($device){
+      $object = new Device();
+      if ($object->validate($posted_data)) {
+            $device = Device::where("device_id",$posted_data['device_id'])->first();
+            if ($device){
+               return response()->json(['status_code' => 201, 'message' => 'Device already created']);
+            }else{
+              $device = Device::where('id',$posted_data['id'])->update($posted_data);
+              if($device){
                 $res = Device::find($posted_data['id']);
                 return response()->json(['status_code' => 200, 'message' => 'Device updated successfully', 'data' => $res]);
               }else{
                 return response()->json(['status_code' => 404, 'message' => 'Device not found']);
               }
-        } else {
-            throw new \Dingo\Api\Exception\StoreResourceFailedException('Unable to update device.', $object->errors());
-        }
+            }
+      } else {
+          throw new \Dingo\Api\Exception\StoreResourceFailedException('Unable to update device.', $object->errors());
+      }
     }
     public function getDevices() {
         $device = Device::where('status','NOT ENGAGE')->get();
