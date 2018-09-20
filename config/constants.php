@@ -635,7 +635,7 @@ return [
 					'Test Condition'=>'1 sec < t < 1.7 sec With TAP on PCB',
 					'Valid for Modes'=>'TIMER, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.5,
 														'Excepted' => [
@@ -643,7 +643,7 @@ return [
 															'test_point_4_time'=>'',
 															'test_point_1_voltage'=>3.3,
 															'test_point_2'=>'',
-															'test_point_3_voltage'=>0,
+															'test_point_3_voltage'=>3.3,
 															'number_of_pulse'=>0,
 															'test_point_4_pulse_high'=>'0-0-0',
 															'test_point_4_pulse_low'=>'0-0-0',
@@ -685,7 +685,7 @@ return [
 					'Test Condition'=>'1 sec < t < 1.7 sec Without TAP on PCB',
 					'Valid for Modes'=>'TIMER, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.5,
 														'Excepted' => [
@@ -775,7 +775,7 @@ return [
                               'number_of_pulse'=>0,
                               'test_point_4_pulse_high'=>'0-0-0',
                               'test_point_4_pulse_low'=>'0-0-0',
-                              'test_point_4_voltage'=>3.3,
+                              'test_point_4_voltage'=>0,
                               'test_point_5'=>'',
                               'test_point_6'=>'',
                               'test_point_7_V'=>3.3,
@@ -831,7 +831,7 @@ return [
                               'number_of_pulse'=>0,
                               'test_point_4_pulse_high'=>'0-0-0',
                               'test_point_4_pulse_low'=>'0-0-0',
-                              'test_point_4_voltage'=>3.3,
+                              'test_point_4_voltage'=>0,
                               'test_point_5'=>'',
                               'test_point_6'=>'',
                               'test_point_7_V'=>3.3,
