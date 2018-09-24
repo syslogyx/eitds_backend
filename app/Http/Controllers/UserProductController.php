@@ -68,7 +68,7 @@ class UserProductController extends Controller
 
           $condition=$FIXED_COL[$test_case]['Mode'][$mode];
 
-        $json=$this->checkStatus($condition,$json);
+         $json=$this->checkStatus($condition,$json);
 
           $tempdate=new DateTime();
           $json['date']=$tempdate->format('Y-m-d');
@@ -118,11 +118,11 @@ class UserProductController extends Controller
         }else if($key=='test_point_1_voltage' || $key=='test_point_3_voltage'  || $key=='test_point_4_voltage' || $key=='test_point_7_V' || $key=='test_point_7_V2'){
 
           if($len[0]==0){
-            if($json[$key] > ($len[0] + $obj['Voltage (V)']) ){
+            if($json[$key] > ($len[0] + ($obj['Voltage (V)']*2)) ){
               $status='2';
               array_push($notOkColumn,$key);
             }
-          }elseif($json[$key] < ($len[0] - $obj['Voltage (V)']) || $json[$key] > ($len[0] + $obj['Voltage (V)'])  ){
+          }elseif($json[$key] < ($len[0] - $obj['Voltage (V)']) || $json[$key] > ($len[0] + ($obj['Voltage (V)']*2))  ){
               $status='2';
               array_push($notOkColumn,$key);
           }
