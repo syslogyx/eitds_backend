@@ -68,7 +68,7 @@ class UserProductController extends Controller
 
           $condition=$FIXED_COL[$test_case]['Mode'][$mode];
 
-          $json=$this->checkStatus($condition,$json);
+        $json=$this->checkStatus($condition,$json);
 
           $tempdate=new DateTime();
           $json['date']=$tempdate->format('Y-m-d');
@@ -475,7 +475,7 @@ class UserProductController extends Controller
                }
                array_push($data,$arr);
              }
-              $finalResponse = $data;
+               $finalResponse = $data;
                // $finalResponse=json_decode($finalResponse[0]->data,true);
                $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
                $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
@@ -500,30 +500,30 @@ class UserProductController extends Controller
                return $pdf->download('report_'.$now.'.pdf');
                // return $pdf->download('transaction_details.pdf');
 
-               return view('report/pdf')->with('finalResponse', $finalResponse[0]->data);
-                $now = new DateTime();
-                $now = $now->format('Y-m-d H:i:s');
-
-
-                if($type==='PDF'){
-                  $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->view('report/pdf')->with('finalResponse',json_decode($finalResponse[0]->data,true))->setPaper('A4', 'landscape');
-                  return $pdf->download('report_'.$now.'.pdf');
-                }elseif ($type==='CSV') {
-                  // Generate and return the spreadsheet
-                   Excel::create('Report_'.$now, function($excel) use ($finalResponse,$now) {
-
-                       // Set the spreadsheet title, creator, and description
-                       $excel->setTitle('Report_'.$now);
-                       $excel->setCreator('Laravel')->setCompany('Syslogyx Pvt Ltd');
-                       $excel->setDescription('Report_'.$now.' file');
-
-                       // Build the spreadsheet, passing in the payments array
-                       $excel->sheet('sheet1', function($sheet) use ($finalResponse) {
-                           $sheet->fromArray($finalResponse);
-                       });
-
-                   })->download('csv');
-                }
+               // return view('report/pdf')->with('finalResponse', $finalResponse[0]->data);
+               //  $now = new DateTime();
+               //  $now = $now->format('Y-m-d H:i:s');
+               //
+               //
+               //  if($type==='PDF'){
+               //    $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->view('report/pdf')->with('finalResponse',json_decode($finalResponse[0]->data,true))->setPaper('A4', 'landscape');
+               //    return $pdf->download('report_'.$now.'.pdf');
+               //  }elseif ($type==='CSV') {
+               //    // Generate and return the spreadsheet
+               //     Excel::create('Report_'.$now, function($excel) use ($finalResponse,$now) {
+               //
+               //         // Set the spreadsheet title, creator, and description
+               //         $excel->setTitle('Report_'.$now);
+               //         $excel->setCreator('Laravel')->setCompany('Syslogyx Pvt Ltd');
+               //         $excel->setDescription('Report_'.$now.' file');
+               //
+               //         // Build the spreadsheet, passing in the payments array
+               //         $excel->sheet('sheet1', function($sheet) use ($finalResponse) {
+               //             $sheet->fromArray($finalResponse);
+               //         });
+               //
+               //     })->download('csv');
+               //  }
 
 
     }
