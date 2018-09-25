@@ -68,10 +68,10 @@ class UserProductController extends Controller
 
           $condition=$FIXED_COL[$test_case]['Mode'][$mode];
 
-         $json=$this->checkStatus($condition,$json);
+          $json=$this->checkStatus($condition,$json);
 
           $tempdate=new DateTime();
-          $json['date']=$tempdate->format('Y-m-d');
+           $json['date']=$tempdate->format('Y-m-d');
 
 
           $model=UserProduct::create($json);
@@ -93,7 +93,7 @@ class UserProductController extends Controller
     {
       $status='1';
       $notOkColumn=array();
-      $condition=$obj['Excepted'];
+      $condition=$obj['Expected'];
       foreach ($condition as $key => $value) {
         $len=explode("-",$value);
         if($key=='test_point_3_time' || $key=='test_point_4_time'){
@@ -128,7 +128,7 @@ class UserProductController extends Controller
           }
         }else if($key=='number_of_pulse'){
             if($len[0]>=0){
-              if($len[0]!=$json[$key]){
+              if($len[0]!=$json[$key] && $len[0]!='!0'){
                   $status='2';
                   array_push($notOkColumn,$key);
               }elseif($len[0]==$json[$key]){
@@ -398,6 +398,7 @@ class UserProductController extends Controller
                     foreach ( $v2 as $k3 => $v3) {
                       foreach ( $v3 as $k4 => $v4) {
                         $FIXED_COL[$k4]['ActualLength']=count($v3[$k4]['Timer Mode'])+count($v3[$k4]['Impact Mode'])+count($v3[$k4]['Timer & Impact Mode']);
+                        $FIXED_COL[$k4]['HighestCount']=max(count($v3[$k4]['Timer Mode']),count($v3[$k4]['Impact Mode']),count($v3[$k4]['Timer & Impact Mode']));
                         $FIXED_COL[$k4]['Mode']['Timer Mode']['Actual']=$v3[$k4]['Timer Mode'];
                         $FIXED_COL[$k4]['Mode']['Impact Mode']['Actual']=$v3[$k4]['Impact Mode'];
                         $FIXED_COL[$k4]['Mode']['Timer & Impact Mode']['Actual']=$v3[$k4]['Timer & Impact Mode'];

@@ -105,15 +105,15 @@ thead { display: table-row-group; }
             @if(isset($value2['ActualLength']))
             <tbody class="level1">
               <tr>
-                  <td rowspan="{{($value2['mode_length'] * 2)}}">TC#{{$value2['Test Case']}} </td>
-                  <td rowspan="{{($value2['mode_length'] * 2)}}">{{$value2['Test Condition']}}</td>
-                  <td rowspan="{{($value2['mode_length'] * 2)}}">{{$value2['Valid for Modes']}} </td>
+                  <td rowspan="{{($value2['ActualLength']>=3)?(($value2['mode_length'] * 2)+1):($value2['ActualLength'] +3)}}">TC#{{$value2['Test Case']}} </td>
+                  <td rowspan="{{($value2['ActualLength']>=3)?(($value2['mode_length'] * 2)+1):($value2['ActualLength'] +3)}}">{{$value2['Test Condition']}}</td>
+                  <td rowspan="{{($value2['ActualLength']>=3)?(($value2['mode_length'] * 2)+1):($value2['ActualLength'] +3)}}">{{$value2['Valid for Modes']}} </td>
               </tr>
               @foreach ($value2["Mode_data"] as $key3 => $value3)
                 <tr>
-                  <td rowspan="{{2}}" >{{$value3['mode_name']}}</td>
-                  <td rowspan="{{2}}" >{{(isset($value3['Time (ms)'])?$value3['Time (ms)']:0)}}</td>
-                  <td rowspan="{{2}}" >{{(isset($value3['Voltage (V)'])?$value3['Voltage (V)']:0)}}</td>
+                  <td rowspan="{{(1+count($value3['Actual']))>=2?2:(1+count($value3['Actual']))}}" >{{$value3['mode_name']}}</td>
+                  <td rowspan="{{(1+count($value3['Actual']))>=2?2:(1+count($value3['Actual']))}}" >{{(isset($value3['Time (ms)'])?$value3['Time (ms)']:0)}}</td>
+                  <td rowspan="{{(1+count($value3['Actual']))>=2?2:(1+count($value3['Actual']))}}" >{{(isset($value3['Voltage (V)'])?$value3['Voltage (V)']:0)}}</td>
                   <td>Excepted</td>
                   <td> {{(isset($value3['Excepted']['test_point_3_time']) ? $value3['Excepted']['test_point_3_time'] : 0)}}</td>
                   <td> {{(isset($value3['Excepted']['test_point_4_time'])?$value3['Excepted']['test_point_4_time']:0)}}</td>

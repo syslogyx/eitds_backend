@@ -202,7 +202,7 @@ return [
 										'Timer Mode'=>[
 														'Time (ms)'=>100,
 														'Voltage (V)'=>0.8,
-															'Excepted' => [
+															'Expected' => [
 																'test_point_3_time'=>'200-1000',
 																'test_point_4_time'=>0,
 																'test_point_1_voltage'=>3.3,
@@ -223,7 +223,7 @@ return [
 										'Impact Mode'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
-																'Excepted' => [
+																'Expected' => [
                                   'test_point_3_time'=>'200-1000',
   																'test_point_4_time'=>0,
   																'test_point_1_voltage'=>3.3,
@@ -244,7 +244,7 @@ return [
 										'Timer & Impact Mode'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
-																'Excepted' => [
+																'Expected' => [
                                   'test_point_3_time'=>'200-1000',
   																'test_point_4_time'=>0,
   																'test_point_1_voltage'=>3.3,
@@ -272,7 +272,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
 															'test_point_3_time'=>0,
 															'test_point_4_time'=>0,
 															'test_point_1_voltage'=>3.3,
@@ -293,7 +293,7 @@ return [
 									'Impact Mode'=>[
 															'Time (ms)'=>100,
 															'Voltage (V)'=>0.8,
-															'Excepted' => [
+															'Expected' => [
                                 'test_point_3_time'=>0,
                                 'test_point_4_time'=>0,
                                 'test_point_1_voltage'=>3.3,
@@ -314,7 +314,7 @@ return [
 									'Timer & Impact Mode'=>[
 															'Time (ms)'=>100,
 															'Voltage (V)'=>0.8,
-															'Excepted' => [
+															'Expected' => [
                                 'test_point_3_time'=>0,
   															'test_point_4_time'=>0,
   															'test_point_1_voltage'=>3.3,
@@ -342,7 +342,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
 															'test_point_4_time'=>0,
 															'test_point_1_voltage'=>3.3,
@@ -371,7 +371,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
 															'test_point_4_time'=>0,
 															'test_point_1_voltage'=>3.3,
@@ -400,7 +400,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
 															'test_point_3_time'=>0,
 															'test_point_4_time'=>'4000',
 															'test_point_1_voltage'=>3.3,
@@ -421,7 +421,7 @@ return [
 										'Timer & Impact Mode'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
-																'Excepted' => [
+																'Expected' => [
                                   'test_point_3_time'=>0,
     															'test_point_4_time'=>'4000',
     															'test_point_1_voltage'=>3.3,
@@ -449,7 +449,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
 															'test_point_4_time'=>'4000',
 															'test_point_1_voltage'=>3.3,
@@ -470,7 +470,7 @@ return [
 										'Timer & Impact Mode'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
-																'Excepted' => [
+																'Expected' => [
                                   'test_point_3_time'=>0,
     															'test_point_4_time'=>'4000',
     															'test_point_1_voltage'=>3.3,
@@ -498,7 +498,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
 															'test_point_3_time'=>'6020',
 															'test_point_4_time'=>0,
 															'test_point_1_voltage'=>3.3,
@@ -519,7 +519,7 @@ return [
 										'Impact Mode'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
-																'Excepted' => [
+																'Expected' => [
                                   'test_point_3_time'=>'6020',
     															'test_point_4_time'=>0,
     															'test_point_1_voltage'=>3.3,
@@ -540,7 +540,7 @@ return [
 											'Timer & Impact Mode'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
-																	'Excepted' => [
+																	'Expected' => [
                                     'test_point_3_time'=>'6020',
       															'test_point_4_time'=>0,
       															'test_point_1_voltage'=>3.3,
@@ -568,7 +568,7 @@ return [
 									'Timer Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>'6020',
                               'test_point_4_time'=>0,
                               'test_point_1_voltage'=>3.3,
@@ -589,7 +589,7 @@ return [
 										'Impact Mode'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
-																'Excepted' => [
+																'Expected' => [
                                   'test_point_3_time'=>'6020',
                                   'test_point_4_time'=>0,
                                   'test_point_1_voltage'=>3.3,
@@ -610,7 +610,7 @@ return [
 											'Timer & Impact Mode'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
-																	'Excepted' => [
+																	'Expected' => [
                                     'test_point_3_time'=>'6020',
       															'test_point_4_time'=>0,
       															'test_point_1_voltage'=>3.3,
@@ -638,7 +638,7 @@ return [
 									'Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
 															'test_point_3_time'=>'1000-1700',
 															'test_point_4_time'=>'',
 															'test_point_1_voltage'=>3.3,
@@ -660,7 +660,7 @@ return [
 									'Timer & Impact Mode'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
-																	'Excepted' => [
+																	'Expected' => [
                                     'test_point_3_time'=>0,
       															'test_point_4_time'=>'',
       															'test_point_1_voltage'=>3.3,
@@ -688,7 +688,7 @@ return [
 									'Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
                               'test_point_4_time'=>'',
                               'test_point_1_voltage'=>3.3,
@@ -710,7 +710,7 @@ return [
 									'Timer & Impact Mode'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
-																	'Excepted' => [
+																	'Expected' => [
                                     'test_point_3_time'=>0,
                                     'test_point_4_time'=>'',
                                     'test_point_1_voltage'=>3.3,
@@ -738,7 +738,7 @@ return [
 									'Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
 															'test_point_3_time'=>0,
 															'test_point_4_time'=>'1700-6000',
 															'test_point_1_voltage'=>3.3,
@@ -766,7 +766,7 @@ return [
 									'Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
                               'test_point_4_time'=>0,
                               'test_point_1_voltage'=>3.3,
@@ -794,7 +794,7 @@ return [
 									'Timer & Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
 															'test_point_4_time'=>'1700-4000',
 															'test_point_1_voltage'=>3.3,
@@ -822,7 +822,7 @@ return [
 									'Timer & Impact Mode'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
-														'Excepted' => [
+														'Expected' => [
                               'test_point_3_time'=>0,
                               'test_point_4_time'=>0,
                               'test_point_1_voltage'=>3.3,
