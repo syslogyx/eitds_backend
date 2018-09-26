@@ -392,21 +392,58 @@ class UserProductController extends Controller
                   }
 
                 }
+              //  return $finalResponse;
+                $FIXED_COL=Config::get('constants.FIXED_COL');
                 foreach ($finalResponse as $k => $v) {
                   foreach ( $v as $k2 => $v2) {
-                    $FIXED_COL=Config::get('constants.FIXED_COL');
                     foreach ( $v2 as $k3 => $v3) {
                       foreach ( $v3 as $k4 => $v4) {
-                        $FIXED_COL[$k4]['ActualLength']=count($v3[$k4]['Timer Mode'])+count($v3[$k4]['Impact Mode'])+count($v3[$k4]['Timer & Impact Mode']);
-                        $FIXED_COL[$k4]['HighestCount']=max(count($v3[$k4]['Timer Mode']),count($v3[$k4]['Impact Mode']),count($v3[$k4]['Timer & Impact Mode']));
-                        $FIXED_COL[$k4]['Mode']['Timer Mode']['Actual']=$v3[$k4]['Timer Mode'];
-                        $FIXED_COL[$k4]['Mode']['Impact Mode']['Actual']=$v3[$k4]['Impact Mode'];
-                        $FIXED_COL[$k4]['Mode']['Timer & Impact Mode']['Actual']=$v3[$k4]['Timer & Impact Mode'];
+
+                          $FIXED_COL[$k4]['Mode']['Timer Mode']['Actual']=$v3[$k4]['Timer Mode'];
+
+                          $FIXED_COL[$k4]['Mode']['Impact Mode']['Actual']=$v3[$k4]['Impact Mode'];
+
+                          $FIXED_COL[$k4]['Mode']['Timer & Impact Mode']['Actual']=$v3[$k4]['Timer & Impact Mode'];
+
                       }
                     }
+
+
+
                     $finalResponse[$k][$k2]=$FIXED_COL;
                   }
                 }
+
+                foreach ( $finalResponse as $frk1 => $frv1) {
+                  foreach ( $frv1 as $frk2 => $FIXED_COL) {
+                    foreach ( $FIXED_COL as $fk1 => $fv1) {
+                      $count=0;
+                      if(isset($fv1['Mode']['Timer Mode']) && count($fv1['Mode']['Timer Mode']['Actual'])==0){
+
+                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer Mode']);
+                      }else if(isset($fv1['Mode']['Timer Mode'])){
+                        $count=$count+count($fv1['Mode']['Timer Mode']['Actual']);
+                      }
+
+
+
+                      if(isset($fv1['Mode']['Impact Mode']) && count($fv1['Mode']['Impact Mode']['Actual'])==0 ){
+                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Impact Mode']);
+                      }else if(isset($fv1['Mode']['Impact Mode'])){
+                        $count=$count+count($fv1['Mode']['Impact Mode']['Actual']);
+                      }
+                      if(isset($fv1['Mode']['Timer & Impact Mode']) && count($fv1['Mode']['Timer & Impact Mode']['Actual'])==0){
+                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer & Impact Mode']);
+                      }else if(isset($fv1['Mode']['Timer & Impact Mode'])){
+                        $count=$count+count($fv1['Mode']['Timer & Impact Mode']['Actual']);
+                      }
+                      $finalResponse[$frk1][$frk2][$fk1]['ActualLength']=$count;
+                    }
+                  }
+                }
+
+
+
                   $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
                   $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
                   $selectedColumns = explode(",",$pdfSettingData->selected_columns);
@@ -421,6 +458,7 @@ class UserProductController extends Controller
                       }
                     }
                   }
+
 
                   $pdfSettingData->selected_columns=$pdfColumnTable;
                   $data['data']=json_encode($finalResponse);
