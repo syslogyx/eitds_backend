@@ -21,13 +21,13 @@ class CreateModeTable extends Migration
       });
       $data = array(
           array(
-          "description" => "Timer Mode"
+          "description" => "Timer"
           ),
           array(
-          "description" => "Impact Mode"
+          "description" => "Impact"
           ),
           array(
-          "description" => "Timer & Impact Mode"
+          "description" => "Timer & Impact"
           )
       );
 

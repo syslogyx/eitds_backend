@@ -147,13 +147,13 @@ class UserProductController extends Controller
                 }else{
                   $highPulse=explode("-",$json['test_point_4_pulse_high']);
                   $lowPulse=explode("-",$json['test_point_4_pulse_low']);
-                  for ($i=0; $i < count($highPulse); $i++) {
-                    if($highPulse[$i]!=$condition['test_point_4_pulse_high']){
-                      $status='2';
-                      array_push($notOkColumn,'test_point_4_pulse_high');
-                      break;
-                    }
-                  }
+                  // for ($i=0; $i < count($highPulse); $i++) {
+                  //   if($highPulse[$i]!=$condition['test_point_4_pulse_high']){
+                  //     $status='2';
+                  //     array_push($notOkColumn,'test_point_4_pulse_high');
+                  //     break;
+                  //   }
+                  // }
                 }
 
               }
@@ -375,7 +375,7 @@ class UserProductController extends Controller
                     foreach ( $finalResponse[$count] as $k2 => $v2) {
                       $testCases=UserProduct::distinct()->select('test_case')->where('product_id', '=', $k2)->pluck('test_case');
                       for ($y = 0; $y < count($testCases); $y++) {
-                        $temp2=array('Test_Case_'.$testCases[$y] => array('Timer Mode'=>array(),'Impact Mode'=>array(),'Timer & Impact Mode'=>array()) );
+                        $temp2=array('Test_Case_'.$testCases[$y] => array('Timer'=>array(),'Impact'=>array(),'Timer & Impact'=>array()) );
                         array_push($v2,$temp2);
                         for ($z = 0; $z < count($v); $z++) {
                           if($testCases[$y]==$v[$z]->test_case){
@@ -392,51 +392,51 @@ class UserProductController extends Controller
                   }
 
                 }
-              //  return $finalResponse;
-                $FIXED_COL=Config::get('constants.FIXED_COL');
+                $FIXED_COL = [];
+
+                // return $finalResponse;
+                // $FIXED_COL_arr = [];
                 foreach ($finalResponse as $k => $v) {
+                  $FIXED_COL=Config::get('constants.FIXED_COL');
                   foreach ( $v as $k2 => $v2) {
                     foreach ( $v2 as $k3 => $v3) {
                       foreach ( $v3 as $k4 => $v4) {
 
-                          $FIXED_COL[$k4]['Mode']['Timer Mode']['Actual']=$v3[$k4]['Timer Mode'];
+                          $FIXED_COL[$k4]['Mode']['Timer']['Actual']=$v3[$k4]['Timer'];
 
-                          $FIXED_COL[$k4]['Mode']['Impact Mode']['Actual']=$v3[$k4]['Impact Mode'];
+                          $FIXED_COL[$k4]['Mode']['Impact']['Actual']=$v3[$k4]['Impact'];
 
-                          $FIXED_COL[$k4]['Mode']['Timer & Impact Mode']['Actual']=$v3[$k4]['Timer & Impact Mode'];
-
+                          $FIXED_COL[$k4]['Mode']['Timer & Impact']['Actual']=$v3[$k4]['Timer & Impact'];
                       }
                     }
-
-
 
                     $finalResponse[$k][$k2]=$FIXED_COL;
                   }
                 }
 
+
                 foreach ( $finalResponse as $frk1 => $frv1) {
                   foreach ( $frv1 as $frk2 => $FIXED_COL) {
                     foreach ( $FIXED_COL as $fk1 => $fv1) {
                       $count=0;
-                      if(isset($fv1['Mode']['Timer Mode']) && count($fv1['Mode']['Timer Mode']['Actual'])==0){
-
-                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer Mode']);
-                      }else if(isset($fv1['Mode']['Timer Mode'])){
-                        $count=$count+count($fv1['Mode']['Timer Mode']['Actual']);
+                      if(isset($fv1['Mode']['Timer']) && count($fv1['Mode']['Timer']['Actual'])==0){
+                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer']);
+                      }else if(isset($fv1['Mode']['Timer'])){
+                        $count=$count+count($fv1['Mode']['Timer']['Actual']);
                       }
 
-
-
-                      if(isset($fv1['Mode']['Impact Mode']) && count($fv1['Mode']['Impact Mode']['Actual'])==0 ){
-                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Impact Mode']);
-                      }else if(isset($fv1['Mode']['Impact Mode'])){
-                        $count=$count+count($fv1['Mode']['Impact Mode']['Actual']);
+                      if(isset($fv1['Mode']['Impact']) && count($fv1['Mode']['Impact']['Actual'])==0 ){
+                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Impact']);
+                      }else if(isset($fv1['Mode']['Impact'])){
+                        $count=$count+count($fv1['Mode']['Impact']['Actual']);
                       }
-                      if(isset($fv1['Mode']['Timer & Impact Mode']) && count($fv1['Mode']['Timer & Impact Mode']['Actual'])==0){
-                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer & Impact Mode']);
-                      }else if(isset($fv1['Mode']['Timer & Impact Mode'])){
-                        $count=$count+count($fv1['Mode']['Timer & Impact Mode']['Actual']);
+
+                      if(isset($fv1['Mode']['Timer & Impact']) && count($fv1['Mode']['Timer & Impact']['Actual'])==0){
+                        unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer & Impact']);
+                      }else if(isset($fv1['Mode']['Timer & Impact'])){
+                        $count=$count+count($fv1['Mode']['Timer & Impact']['Actual']);
                       }
+
                       $finalResponse[$frk1][$frk2][$fk1]['ActualLength']=$count;
                     }
                   }
@@ -475,8 +475,13 @@ class UserProductController extends Controller
 
 
 
-    public function download($userId,$date,$productId,$type)
-    {
+    public function download($userId,$date,$productId,$type)  {
+               $queryDate=Input::all();
+               $productId=0;
+               if(isset($queryDate['product_id']) && $queryDate['product_id'] !=''){
+                  $productId=$queryDate['product_id'];
+               }
+// return $product_Id;
                $finalResponse=PdfTemp::where(['id'=>1])->get();
                $finalResponse = json_decode($finalResponse[0]->data,true);
                $data = [];
@@ -500,9 +505,40 @@ class UserProductController extends Controller
     												  if($key4 == "Actual"){
                                 foreach ($value4 as $key5 => $value5) {
                                   $value5["not_ok_columns"] = [];
-
-
     														  $value5["not_ok_columns"] = explode(',', $value5["not_ok_column"]);
+                                  if(count($value4) == ($key5 + 1)){
+      															// value1["Mode_data"] = value5;
+      															$k = count($value1["Mode_data"]) - 1;
+      															// value1["Mode_data"][0].merge(value5);
+
+  															    $value1["Mode_data"][$k]["user_id"]=$value5["user_id"];
+  								                  $value1["Mode_data"][$k]["device_id"]=$value5["device_id"];
+  								                  $value1["Mode_data"][$k]["product_id"]=$value5["product_id"];
+  								                  $value1["Mode_data"][$k]["mode"]=$value5["mode"];
+  								                  $value1["Mode_data"][$k]["test_case"]=$value5["test_case"];
+  								                  $value1["Mode_data"][$k]["test_point_3_voltage"]=$value5["test_point_3_voltage"];
+  								                  $value1["Mode_data"][$k]["test_point_3_time"]=$value5["test_point_3_time"];
+  								                  $value1["Mode_data"][$k]["test_point_4_voltage"]=$value5["test_point_4_voltage"];
+  								                  $value1["Mode_data"][$k]["test_point_4_time"]=$value5["test_point_4_time"];
+  								                  $value1["Mode_data"][$k]["test_point_4_pulse_low"]=$value5["test_point_4_pulse_low"];
+  								                  $value1["Mode_data"][$k]["test_point_4_pulse_high"]=$value5["test_point_4_pulse_high"];
+  								                  $value1["Mode_data"][$k]["status"]=$value5["status"];
+  								                  $value1["Mode_data"][$k]["date"]=$value5["date"];
+  								                  $value1["Mode_data"][$k]["created_at"]=$value5["created_at"];
+  								                  $value1["Mode_data"][$k]["updated_at"]=$value5["updated_at"];
+  								                  $value1["Mode_data"][$k]["test_point_1_voltage"]=$value5["test_point_1_voltage"];
+  								                  $value1["Mode_data"][$k]["test_point_2"]=$value5["test_point_2"];
+  								                  $value1["Mode_data"][$k]["test_point_5"]=$value5["test_point_5"];
+  								                  $value1["Mode_data"][$k]["test_point_6"]=$value5["test_point_6"];
+  								                  $value1["Mode_data"][$k]["test_point_7_V"]=$value5["test_point_7_V"];
+  								                  $value1["Mode_data"][$k]["test_point_7_V2"]=$value5["test_point_7_V2"];
+  								                  $value1["Mode_data"][$k]["number_of_pulse"]=$value5["number_of_pulse"];
+  								                  $value1["Mode_data"][$k]["not_ok_column"]=$value5["not_ok_column"];
+  								                  $value1["Mode_data"][$k]["not_ok_columns"]=$value5["not_ok_columns"];
+  								                  $value1["Mode_data"][$k]["token"]=$value5["token"];
+  								                  $value1["Mode_data"][$k]["username"]=$value5["username"];
+  								                  $value1["Mode_data"][$k]["test_case_name"]=$value5["test_case_name"];
+  														   }
     													 }
     												 }
     											 }
@@ -515,6 +551,7 @@ class UserProductController extends Controller
                array_push($data,$arr);
              }
                $finalResponse = $data;
+               // return $finalResponse;
                // $finalResponse=json_decode($finalResponse[0]->data,true);
                $pdfSettingData = PdfSetting::where('status','ACTIVE')->get();
                $pdfSettingData=count($pdfSettingData)>0?$pdfSettingData[0]:'';
@@ -533,36 +570,11 @@ class UserProductController extends Controller
 
                $pdfSettingData->selected_columns=$pdfColumnTable;
                $now = new DateTime();
-               $now = $now->format('Y-m-d H:i:s');
-               view()->share(compact('finalResponse','pdfSettingData'));
+               $now = $now->format('d-m-Y');
+               view()->share(compact('finalResponse','pdfSettingData','productId','now'));
                $pdf = PDF::loadView('report/pdf')->setPaper('A4', 'landscape');
                return $pdf->download('report_'.$now.'.pdf');
-               // return $pdf->download('transaction_details.pdf');
 
-               // return view('report/pdf')->with('finalResponse', $finalResponse[0]->data);
-               //  $now = new DateTime();
-               //  $now = $now->format('Y-m-d H:i:s');
-               //
-               //
-               //  if($type==='PDF'){
-               //    $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->view('report/pdf')->with('finalResponse',json_decode($finalResponse[0]->data,true))->setPaper('A4', 'landscape');
-               //    return $pdf->download('report_'.$now.'.pdf');
-               //  }elseif ($type==='CSV') {
-               //    // Generate and return the spreadsheet
-               //     Excel::create('Report_'.$now, function($excel) use ($finalResponse,$now) {
-               //
-               //         // Set the spreadsheet title, creator, and description
-               //         $excel->setTitle('Report_'.$now);
-               //         $excel->setCreator('Laravel')->setCompany('Syslogyx Pvt Ltd');
-               //         $excel->setDescription('Report_'.$now.' file');
-               //
-               //         // Build the spreadsheet, passing in the payments array
-               //         $excel->sheet('sheet1', function($sheet) use ($finalResponse) {
-               //             $sheet->fromArray($finalResponse);
-               //         });
-               //
-               //     })->download('csv');
-               //  }
 
 
     }

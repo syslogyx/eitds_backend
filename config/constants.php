@@ -199,7 +199,7 @@ return [
 						'Test Condition'=>'0.2 sec < t < 1 sec With TAP on PCB',
 						'Valid for Modes'=>'TIMER, IMPACT, T+I',
 						'Mode'=>[
-										'Timer Mode'=>[
+										'Timer'=>[
 														'Time (ms)'=>100,
 														'Voltage (V)'=>0.8,
 															'Expected' => [
@@ -220,7 +220,7 @@ return [
 															'Actual' => [
 															]
 															],
-										'Impact Mode'=>[
+										'Impact'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
 																'Expected' => [
@@ -241,7 +241,7 @@ return [
 																'Actual' => [
 																]
 															],
-										'Timer & Impact Mode'=>[
+										'Timer & Impact'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
 																'Expected' => [
@@ -269,7 +269,7 @@ return [
 					'Test Condition'=>'0.2 sec < t < 1 sec Without TAP on PCB',
 					'Valid for Modes'=>'TIMER, IMPACT, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -290,7 +290,7 @@ return [
 														'Actual' => [
 														]
 														],
-									'Impact Mode'=>[
+									'Impact'=>[
 															'Time (ms)'=>100,
 															'Voltage (V)'=>0.8,
 															'Expected' => [
@@ -311,7 +311,7 @@ return [
 															'Actual' => [
 															]
 														],
-									'Timer & Impact Mode'=>[
+									'Timer & Impact'=>[
 															'Time (ms)'=>100,
 															'Voltage (V)'=>0.8,
 															'Expected' => [
@@ -337,9 +337,9 @@ return [
 				'Test_Case_3'=>[
 					'Test Case'=>3,
 					'Test Condition'=>'1 sec < t < 4 sec With TAP on PCB',
-					'Valid for Modes'=>'Timer Mode',
+					'Valid for Modes'=>'Timer',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -366,9 +366,9 @@ return [
 				'Test_Case_4'=>[
 					'Test Case'=>4,
 					'Test Condition'=>'1 sec < t < 4 sec Without TAP on PCB',
-					'Valid for Modes'=>'Timer Mode',
+					'Valid for Modes'=>'Timer',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -397,7 +397,7 @@ return [
 					'Test Condition'=>'t = 4 sec With TAP on PCB',
 					'Valid for Modes'=>'TIMER, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -418,7 +418,7 @@ return [
 														'Actual' => [
 														]
 										],
-										'Timer & Impact Mode'=>[
+										'Timer & Impact'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
 																'Expected' => [
@@ -446,7 +446,7 @@ return [
 					'Test Condition'=>'t = 4 sec Without TAP on PCB',
 					'Valid for Modes'=>'TIMER, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -467,7 +467,7 @@ return [
 														'Actual' => [
 														]
 										],
-										'Timer & Impact Mode'=>[
+										'Timer & Impact'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
 																'Expected' => [
@@ -495,7 +495,7 @@ return [
 					'Test Condition'=>'t>=6 sec With TAP on PCB',
 					'Valid for Modes'=>'TIMER, IMPACT, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -516,7 +516,7 @@ return [
 														'Actual' => [
 														]
 										],
-										'Impact Mode'=>[
+										'Impact'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
 																'Expected' => [
@@ -537,7 +537,7 @@ return [
 																'Actual' => [
 																]
 											],
-											'Timer & Impact Mode'=>[
+											'Timer & Impact'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
 																	'Expected' => [
@@ -565,7 +565,7 @@ return [
 					'Test Condition'=>'t>=6 sec Without TAP on PCB',
 					'Valid for Modes'=>'TIMER, IMPACT, T+I',
 					'Mode'=>[
-									'Timer Mode'=>[
+									'Timer'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -586,7 +586,7 @@ return [
 														'Actual' => [
 														]
 										],
-										'Impact Mode'=>[
+										'Impact'=>[
 																'Time (ms)'=>100,
 																'Voltage (V)'=>0.8,
 																'Expected' => [
@@ -607,7 +607,7 @@ return [
 																'Actual' => [
 																]
 											],
-											'Timer & Impact Mode'=>[
+											'Timer & Impact'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
 																	'Expected' => [
@@ -635,7 +635,7 @@ return [
 					'Test Condition'=>'1 sec < t < 1.7 sec With TAP on PCB',
 					'Valid for Modes'=>'TIMER, T+I',
 					'Mode'=>[
-									'Impact Mode'=>[
+									'Impact'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -657,7 +657,7 @@ return [
 														]
 										],
 
-									'Timer & Impact Mode'=>[
+									'Timer & Impact'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
 																	'Expected' => [
@@ -685,7 +685,7 @@ return [
 					'Test Condition'=>'1 sec < t < 1.7 sec Without TAP on PCB',
 					'Valid for Modes'=>'TIMER, T+I',
 					'Mode'=>[
-									'Impact Mode'=>[
+									'Impact'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -707,7 +707,7 @@ return [
 														]
 										],
 
-									'Timer & Impact Mode'=>[
+									'Timer & Impact'=>[
 																	'Time (ms)'=>100,
 																	'Voltage (V)'=>0.8,
 																	'Expected' => [
@@ -733,9 +733,9 @@ return [
 				'Test_Case_11'=>[
 					'Test Case'=>11,
 					'Test Condition'=>'1.7 sec < t < 6 sec With TAP on PCB',
-					'Valid for Modes'=>'Impact Mode',
+					'Valid for Modes'=>'Impact',
 					'Mode'=>[
-									'Impact Mode'=>[
+									'Impact'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -761,9 +761,9 @@ return [
 				'Test_Case_12'=>[
 					'Test Case'=>12,
 					'Test Condition'=>'1.7 sec < t < 6 sec Without TAP on PCB',
-					'Valid for Modes'=>'Impact Mode',
+					'Valid for Modes'=>'Impact',
 					'Mode'=>[
-									'Impact Mode'=>[
+									'Impact'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -791,7 +791,7 @@ return [
 					'Test Condition'=>'1.7 sec < t < 4 sec With TAP on PCB',
 					'Valid for Modes'=>'T+I',
 					'Mode'=>[
-									'Timer & Impact Mode'=>[
+									'Timer & Impact'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
@@ -819,7 +819,7 @@ return [
 					'Test Condition'=>'1.7 sec < t < 4 sec Without TAP on PCB',
 					'Valid for Modes'=>'T+I',
 					'Mode'=>[
-									'Timer & Impact Mode'=>[
+									'Timer & Impact'=>[
 													'Time (ms)'=>100,
 													'Voltage (V)'=>0.8,
 														'Expected' => [
