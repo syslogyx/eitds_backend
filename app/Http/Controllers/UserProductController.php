@@ -282,10 +282,16 @@ class UserProductController extends Controller
     }
 
     public function getProductHistoryByDateAndProductIdNew() {
-              $posted_data = Input::all();
+
+              $posted_data =Input::all();
+              unset($posted_data['page']);
+              $limit=$posted_data['limit'];
+              unset($posted_data['limit']);
               $status =!isset($posted_data['status'])?'':$posted_data['status'];
+              $total=0;
+              $lastPage=0;
               $productList='';
-              $productList=UserProduct::where($posted_data)->get();
+
 
               // if(isset($posted_data['user_id'])){
               //   $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
@@ -338,12 +344,48 @@ class UserProductController extends Controller
               // }
 
   // return  $productList;
+              if(!isset($posted_data['user_id'])){
+                 $productIds = UserProduct::distinct()->paginate($limit,['product_id'])->pluck('product_id');
+
+                 $total=count(UserProduct::distinct()->pluck('product_id'));
+
+
+              }else{
+
+                 $productIds = UserProduct::where("user_id",$posted_data['user_id'])->distinct()->paginate($limit,['product_id'])->pluck('product_id');
+
+                 $total=count(UserProduct::where("user_id",$posted_data['user_id'])->distinct()->pluck('product_id'));
+
+              }
+
+
+
+              if(!isset($posted_data['product_id'])){
+                $productList=UserProduct::whereIn('product_id',$productIds)->get();
+
+              }else{
+                $productList=UserProduct::where($posted_data)->get();
+                $total=1;
+
+              }
+
+
              if (count($productList)>0){
-               if(!isset($posted_data['user_id'])){
-                  $productIds = UserProduct::distinct()->pluck('product_id');
-               }else{
-                  $productIds = UserProduct::where("user_id",$posted_data['user_id'])->distinct()->pluck('product_id');
-               }
+               // if(!isset($posted_data['user_id'])){
+               //    $productIds = UserProduct::distinct()->paginate($limit,['product_id'])->pluck('product_id');
+               //
+               //    $total=count(UserProduct::distinct()->pluck('product_id'));
+               //
+               //
+               // }else{
+               //
+               //    $productIds = UserProduct::where("user_id",$posted_data['user_id'])->distinct()->paginate($limit,['product_id']);
+               //
+               //    $total=count(UserProduct::where("user_id",$posted_data['user_id'])->distinct()->pluck('product_id'));
+               //
+               // }
+                 $lastPage=($total % $limit)>0? intval($total / $limit)+1:($total / $limit);
+
 
                 if (isset($posted_data['product_id'])){
                   $productIds= array($posted_data['product_id']);
@@ -394,7 +436,7 @@ class UserProductController extends Controller
                 }
                 $FIXED_COL = [];
 
-                // return $finalResponse;
+               // return $finalResponse;
                 // $FIXED_COL_arr = [];
                 foreach ($finalResponse as $k => $v) {
                   $FIXED_COL=Config::get('constants.FIXED_COL');
@@ -423,18 +465,21 @@ class UserProductController extends Controller
                         unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer']);
                       }else if(isset($fv1['Mode']['Timer'])){
                         $count=$count+count($fv1['Mode']['Timer']['Actual']);
+                          $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer']['Actual'][0]['username'];
                       }
 
                       if(isset($fv1['Mode']['Impact']) && count($fv1['Mode']['Impact']['Actual'])==0 ){
                         unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Impact']);
                       }else if(isset($fv1['Mode']['Impact'])){
                         $count=$count+count($fv1['Mode']['Impact']['Actual']);
+                        $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Impact']['Actual'][0]['username'];
                       }
 
                       if(isset($fv1['Mode']['Timer & Impact']) && count($fv1['Mode']['Timer & Impact']['Actual'])==0){
                         unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer & Impact']);
                       }else if(isset($fv1['Mode']['Timer & Impact'])){
                         $count=$count+count($fv1['Mode']['Timer & Impact']['Actual']);
+                          $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer & Impact']['Actual'][0]['username'];
                       }
 
                       $finalResponse[$frk1][$frk2][$fk1]['ActualLength']=$count;
@@ -459,13 +504,13 @@ class UserProductController extends Controller
                     }
                   }
 
-
+                  // return $finalResponse;
                   $pdfSettingData->selected_columns=$pdfColumnTable;
                   $data['data']=json_encode($finalResponse);
                   $temp=PdfTemp::where('id',1)->update($data);
 
 
-               return response()->json(['status_code' => 200, 'message' => 'Product list', 'data' => $finalResponse,'columnList'=>$pdfSettingData]);
+               return response()->json(['status_code' => 200, 'message' => 'Product list','total'=>$total,'lastPage'=>$lastPage, 'data' => $finalResponse,'columnList'=>$pdfSettingData]);
 
              }else{
                return response()->json(['status_code' => 404, 'message' => 'Record not found']);
@@ -478,8 +523,11 @@ class UserProductController extends Controller
     public function download($userId,$date,$productId,$type)  {
                $queryDate=Input::all();
                $productId=0;
+               $productFinalId=0;
                if(isset($queryDate['product_id']) && $queryDate['product_id'] !=''){
                   $productId=$queryDate['product_id'];
+                  $object = Sticker::where('tempId',$productId)->first();
+                  $productFinalId=$object['seriesName'].''.$object['finalId'];
                }
 // return $product_Id;
                $finalResponse=PdfTemp::where(['id'=>1])->get();
@@ -490,6 +538,8 @@ class UserProductController extends Controller
                  foreach ($finalResponse[$i] as $key => $value) {
                     $arr["project_id"] = $key;
 							      $arr["test_cases"] = [];
+                    $arr['username'] = $value['username'];
+                    unset($value['username']);
                     foreach ($value as $key1 => $value1) {
                       $value1["Mode_data"] = [];
                       foreach ($value1 as $key2 => $value2) {
@@ -571,9 +621,9 @@ class UserProductController extends Controller
                $pdfSettingData->selected_columns=$pdfColumnTable;
                $now = new DateTime();
                $now = $now->format('d-m-Y');
-               view()->share(compact('finalResponse','pdfSettingData','productId','now'));
+               view()->share(compact('finalResponse','pdfSettingData','productId','now','productFinalId'));
                $pdf = PDF::loadView('report/pdf')->setPaper('A4', 'landscape');
-               return $pdf->download('report_'.$now.'.pdf');
+               return $pdf->download('report_'.$productFinalId.'_'.$now.'.pdf');
 
 
 

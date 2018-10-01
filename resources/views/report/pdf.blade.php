@@ -52,6 +52,7 @@ tr {
 }
 body{
   font-size: 9px;
+  font-family: 'Calibri';
 }
 thead { display: table-row-group; }
 
@@ -74,6 +75,7 @@ thead { display: table-row-group; }
 	background-color ...
 	background-gradient: ...
   border:1px solid;
+  font-family: 'Calibri';
 }
 .wrapping-div {
         display: block;
@@ -88,9 +90,14 @@ thead { display: table-row-group; }
 <div>
 
   <div id="tableToExport">
+      <div style="top:0px;position:fixed">
+        <img src="http://eitdsapi.syslogyx.com/img/logo.png" width="150" height="30"/>
+      </div>
+      <br><br>
+
       <div>
-        <img src="http://eitdsapi.syslogyx.com/img/1538054261.png" width="150" height="35"/>
-      </div><br>
+        <h1 style="text-align:center;font-family: Calibri">Test Report</h1>
+      </div>
     @if($productId == 0)
     @foreach ($finalResponse as $key => $value)
     <div id="export-table">
@@ -215,14 +222,14 @@ thead { display: table-row-group; }
         <table class=" table table-condensed table-bordered"  id="hidden_table">
           <thead class="thead-default">
             <tr>
-                <td  colspan="2" style="border:1px solid;text-align:center;padding: 0px"><h4>Product Id : </h4></td>
-                <td  colspan="2" style="border:1px solid;text-align:center;padding: 0px"><h4>{{$value["project_id"]}}</h4></td>
-                <td  colspan="7" style="border:1px solid;text-align:center;padding: 0px"><h4>EITDS v2.0</h4></td>
-                <td  colspan="2" style="border:1px solid;text-align:center;padding: 0px"><h4>Report Date : </h4></td>
-                <td  colspan="2" style="border:1px solid;text-align:center;padding: 0px"><h4>{{$now}}</h4></td>
+                <th  colspan="2" style="border:1px solid;text-align:center;padding: 15px">Product Id :</th>
+                <th  colspan="2" style="border:1px solid;text-align:center;padding: 15px; ">{{$productFinalId}} </th>
+                <th  colspan="7" style="border:1px solid;text-align:center;padding: 15px">EITDS v2.0</th>
+                <th  colspan="2" style="border:1px solid;text-align:center;padding: 15px">Report Date : </th>
+                <th  colspan="2" style="border:1px solid;text-align:center;padding: 15px">{{$now}}</th>
             </tr>
             <tr>
-                <td  colspan="15" style="border:1px solid;text-align:center;padding: 0px"><h4>FUNCTIONAL TESTS</h4></td>
+                <th  colspan="15" style="border:1px solid;text-align:center;padding: 5px">FUNCTIONAL TESTS</th>
             </tr>
             <tr>
                 <th rowspan="2" style="border:1px solid;text-align: center;vertical-align: middle;padding: 0px">Test Case</th>
@@ -280,30 +287,30 @@ thead { display: table-row-group; }
           @endif
         @endforeach
         <tr style="border:1px solid">
-          <td style="border:1px solid" colspan="15"></td>
+          <td style="border:1px solid;padding: 0px" colspan="15"></td>
         </tr>
         <tr style="border:1px solid">
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4">Tested By</td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4">Verified By</td>
-          <td  style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4">Approved By</td>
+          <th style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="4">Tested By</th>
+          <th style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="4">Verified By</th>
+          <th  style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="4">Approved By</th>
 
-<td rowspan="4" style="border:1px solid;text-align: center;vertical-align: middle;" colspan="3"> <div style="color:#adacac">Company Seal</div>   </td>
+          <td rowspan="4" style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="3"> <div style="color:#adacac">Company Seal</div>   </td>
         </tr>
         <tr  rowspan="2" style="border:1px solid" height="25px">
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"> <div style="color:#adacac">(Signature)</div> </td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;"  colspan="4"> <div style="color:#adacac">(Signature)</div>  </td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;"  colspan="4"> <div style="color:#adacac">(Signature)</div>  </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="4"> {{$value['username']}} </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px"  colspan="4"> Nikhil Muley </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px"  colspan="4"> Vaibhav Deshpande  </td>
 
         </tr>
         <tr style="border:1px solid">
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"><div style="color:#adacac">(Name)</div> </td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"><div style="color:#adacac">(Name)</div> </td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"><div style="color:#adacac">(Name)</div> </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="4"> {{$value['username']}} </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px"  colspan="4"> Nikhil Muley </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px"  colspan="4"> Vaibhav Deshpande  </td>
         </tr>
         <tr style="border:1px solid">
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"><div style="color:#adacac">(Designation)</div> </td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"><div style="color:#adacac">(Designation)</div> </td>
-          <td style="border:1px solid;text-align: center;vertical-align: middle;" colspan="4"><div style="color:#adacac">(Designation)</div> </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px" colspan="4">  Embedded Tester </td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px"  colspan="4"> Team Lead - Embedded System</td>
+          <td style="border:1px solid;text-align: center;vertical-align: middle;padding: 5px"  colspan="4"> Delivery Manager  </td>
         </tr>
 
   </tbody>
@@ -312,5 +319,9 @@ thead { display: table-row-group; }
     @endif
     @endforeach
     @endif
+
+    <div style="bottom:10px;position:fixed">
+      <img src="http://eitdsapi.syslogyx.com/img/Address.png"  style="width:100%;height:5%"/>
+    </div>
   </div>
 </div>

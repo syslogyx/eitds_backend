@@ -28,7 +28,7 @@ class StickerController extends Controller
      */
      public function generateId() {
          $posted_data = Input::all();
-         $object = Sticker::where('tempId',$posted_data['product_id'])->get();;
+         $object = Sticker::where('tempId',$posted_data['product_id'])->get();
          if (count($object)>0) {
             return response()->json(['status_code' => 200, 'message' => 'Product is exist', 'data' => $object]);
          } else {
