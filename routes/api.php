@@ -51,6 +51,7 @@ $api->version("v1", function($api) {
     $api->get("get/productsByUserId/{id}", "App\Http\Controllers\UserProductController@getProductsByUserId");
     $api->post("get/productHistoryByDateAndProductId", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductId");
     $api->post("get/productHistoryByDateAndProductIdNew", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductIdNew");
+    $api->post("get/productHistoryByDateAndProductIdTesting", "App\Http\Controllers\UserProductController@getProductHistoryByDateAndProductIdTesting");
     $api->get('report/download/{userId}/{date}/{productId}/{type}','App\Http\Controllers\UserProductController@download');
     $api->post("get/result", "App\Http\Controllers\UserProductController@getResult");
 

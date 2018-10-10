@@ -42,7 +42,7 @@ class StickerController extends Controller
       $object = PdfTemp::where(['id'=>2])->get();
       $list = json_decode($object[0]->data,true);
       $json=[];
-      $pageSize=20;
+      $pageSize=35;
       $count=count($list);
       $pages=ceil($count/$pageSize);
             for ($i = 0; $i < $pages;$i++) {
@@ -86,6 +86,8 @@ class StickerController extends Controller
            return response()->json(['status_code' => 203, 'message' => 'Product does not exist']);
         }
     }
+
+
 
     /**
      * Display the specified resource.

@@ -19,7 +19,7 @@ use PDF;
 use Excel;
 use \stdClass;
 use App\PdfTemp;
-
+use Illuminate\Support\Facades\DB;
 class UserProductController extends Controller
 {
     /**
@@ -284,6 +284,9 @@ class UserProductController extends Controller
     public function getProductHistoryByDateAndProductIdNew() {
 
               $posted_data =Input::all();
+              $page=$posted_data['page'];
+              $skip=$posted_data['limit']*($page-1);
+
               unset($posted_data['page']);
               $limit=$posted_data['limit'];
               unset($posted_data['limit']);
@@ -291,77 +294,37 @@ class UserProductController extends Controller
               $total=0;
               $lastPage=0;
               $productList='';
+              $productIds=array();
+
+              if(isset($posted_data['date'])){
+                $date='"'.$posted_data['date'].'"';
+
+                $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc`  WHERE date = $date GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+
+              }else if(!isset($posted_data['user_id'])){
+                // $productIds = UserProduct::distinct()->paginate($limit,['product_id'])->pluck('product_id');
+                 $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
 
 
-              // if(isset($posted_data['user_id'])){
-              //   $productList = UserProduct::where(["user_id"=>$posted_data['user_id']]);
-              //     if($status!=''){
-              //       $productList = UserProduct::where(["user_id"=>$posted_data['user_id'],'status'=>$status]);
-              //     }
-              // }
-              // if(!isset($posted_data['date']) && !isset($posted_data['product_id'])){
-              //   if(isset($posted_data['user_id'])){
-              //       $productList = $productList->get();
-              //   }else{
-              //         $productList=UserProduct::All();
-              //         if($status!=''){
-              //           $productList=UserProduct::where(['status'=>$status])->get();
-              //         }
-              //   }
-              //
-              // }else{
-              //   if(isset($posted_data['date']) && !isset($posted_data['product_id'])){
-              //     if(isset($posted_data['user_id'])){
-              //         $productList = $productList->where("date",$posted_data['date'])->get();
-              //     }else{
-              //       $productList=UserProduct::where(["date"=>$posted_data['date']])->get();
-              //       if($status!=''){
-              //         $productList=UserProduct::where(["date"=>$posted_data['date'],'status'=>$status])->get();
-              //       }
-              //     }
-              //
-              //   }elseif (!isset($posted_data['date']) && isset($posted_data['product_id'])) {
-              //     if(isset($posted_data['user_id'])){
-              //         $productList = $productList->where("product_id",$posted_data['product_id'])->get();
-              //     }else{
-              //       $productList=UserProduct :: where(["product_id"=>$posted_data['product_id']])->get();
-              //       if($status!=''){
-              //         $productList=UserProduct :: where(["product_id"=>$posted_data['product_id'],'status'=>$status])->get();
-              //       }
-              //     }
-              //
-              //   }else{
-              //     if(isset($posted_data['user_id'])){
-              //       $productList = $productList->where("date",$posted_data['date'])->where("product_id",$posted_data['product_id'])->get();
-              //     }else{
-              //       $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id']])->get();
-              //       if($status!=''){
-              //         $productList=UserProduct :: where(["date"=>$posted_data['date'],"product_id"=>$posted_data['product_id'],'status'=>$status])->get();
-              //       }
-              //     }
-              //
-              //   }
-              // }
 
-  // return  $productList;
-              if(!isset($posted_data['user_id'])){
-                 $productIds = UserProduct::distinct()->paginate($limit,['product_id'])->pluck('product_id');
-
-                 $total=count(UserProduct::distinct()->pluck('product_id'));
+                 // $total=count(UserProduct::distinct()->pluck('product_id'));
 
 
               }else{
+                 $userId=$posted_data['user_id'];
+                 $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE user_id = $userId GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
 
-                 $productIds = UserProduct::where("user_id",$posted_data['user_id'])->distinct()->paginate($limit,['product_id'])->pluck('product_id');
 
-                 $total=count(UserProduct::where("user_id",$posted_data['user_id'])->distinct()->pluck('product_id'));
 
               }
+              $total=count(UserProduct::where($posted_data)->distinct()->pluck('product_id'));
 
-
+               for ($x = 0; $x < count($tempProductIds); $x++) {
+                 array_push($productIds,$tempProductIds[$x]->product_id);
+               }
 
               if(!isset($posted_data['product_id'])){
-                $productList=UserProduct::whereIn('product_id',$productIds)->get();
+                $productList=UserProduct::whereIn('product_id',$productIds)->where($posted_data)->get();
 
               }else{
                 $productList=UserProduct::where($posted_data)->get();
@@ -371,19 +334,7 @@ class UserProductController extends Controller
 
 
              if (count($productList)>0){
-               // if(!isset($posted_data['user_id'])){
-               //    $productIds = UserProduct::distinct()->paginate($limit,['product_id'])->pluck('product_id');
-               //
-               //    $total=count(UserProduct::distinct()->pluck('product_id'));
-               //
-               //
-               // }else{
-               //
-               //    $productIds = UserProduct::where("user_id",$posted_data['user_id'])->distinct()->paginate($limit,['product_id']);
-               //
-               //    $total=count(UserProduct::where("user_id",$posted_data['user_id'])->distinct()->pluck('product_id'));
-               //
-               // }
+
                  $lastPage=($total % $limit)>0? intval($total / $limit)+1:($total / $limit);
 
 
@@ -513,11 +464,10 @@ class UserProductController extends Controller
                return response()->json(['status_code' => 200, 'message' => 'Product list','total'=>$total,'lastPage'=>$lastPage, 'data' => $finalResponse,'columnList'=>$pdfSettingData]);
 
              }else{
-               return response()->json(['status_code' => 404, 'message' => 'Record not found']);
+               return response()->json(['status_code' => 404, 'message' => 'Record not found','total'=>0,'lastPage'=>0, 'data' => [],'columnList'=>[]]);
              }
 
     }
-
 
 
     public function download($userId,$date,$productId,$type)  {
@@ -529,7 +479,6 @@ class UserProductController extends Controller
                   $object = Sticker::where('tempId',$productId)->first();
                   $productFinalId=$object['seriesName'].''.$object['finalId'];
                }
-// return $product_Id;
                $finalResponse=PdfTemp::where(['id'=>1])->get();
                $finalResponse = json_decode($finalResponse[0]->data,true);
                $data = [];
@@ -625,6 +574,11 @@ class UserProductController extends Controller
                $pdf = PDF::loadView('report/pdf')->setPaper('A4', 'landscape');
                return $pdf->download('report_'.$productFinalId.'_'.$now.'.pdf');
 
+
+
+    }
+
+    public function bulkDownload()  {
 
 
     }
