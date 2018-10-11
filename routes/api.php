@@ -25,7 +25,7 @@ $api = app("Dingo\Api\Routing\Router");
 $api->version("v1", function($api) {
     // user's api
     $api->post("create/user", "App\Http\Controllers\UserController@createUser");
-    $api->put("update/user", "App\Http\Controllers\UserController@updateUser");
+    $api->post("update/user", "App\Http\Controllers\UserController@updateUser");
     $api->get("get/users", "App\Http\Controllers\UserController@getUsers");
     $api->get("get/usersnew", "App\Http\Controllers\UserController@getUsersNew");
     $api->get("get/user/{id}", "App\Http\Controllers\UserController@getUserById");
@@ -34,7 +34,7 @@ $api->version("v1", function($api) {
 
     // device's api
     $api->post("create/device", "App\Http\Controllers\DeviceController@createDevice");
-    $api->put("update/device", "App\Http\Controllers\DeviceController@updateDevice");
+    $api->post("update/device", "App\Http\Controllers\DeviceController@updateDevice");
     $api->get("get/devices", "App\Http\Controllers\DeviceController@getDevices");
     $api->get("get/all/devices", "App\Http\Controllers\DeviceController@getAllDevices");
     $api->get("get/device/{id}", "App\Http\Controllers\DeviceController@getDeviceById");
