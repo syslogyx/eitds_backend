@@ -417,6 +417,11 @@ class UserProductController extends Controller
                       }else if(isset($fv1['Mode']['Timer'])){
                         $count=$count+count($fv1['Mode']['Timer']['Actual']);
                           $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer']['Actual'][0]['username'];
+                          $finalId =  Sticker::where('tempId',$fv1['Mode']['Timer']['Actual'][0]['product_id'])->first();
+                          if ($finalId != null) {
+                            $finalResponse[$frk1][$frk2]['finalId']=$finalId->seriesName.''.$finalId->finalId;;
+                          }
+
                       }
 
                       if(isset($fv1['Mode']['Impact']) && count($fv1['Mode']['Impact']['Actual'])==0 ){
@@ -424,6 +429,10 @@ class UserProductController extends Controller
                       }else if(isset($fv1['Mode']['Impact'])){
                         $count=$count+count($fv1['Mode']['Impact']['Actual']);
                         $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Impact']['Actual'][0]['username'];
+                        $finalId =  Sticker::where('tempId',$fv1['Mode']['Impact']['Actual'][0]['product_id'])->first();
+                        if ($finalId != null) {
+                          $finalResponse[$frk1][$frk2]['finalId']=$finalId->seriesName.''.$finalId->finalId;
+                        }
                       }
 
                       if(isset($fv1['Mode']['Timer & Impact']) && count($fv1['Mode']['Timer & Impact']['Actual'])==0){
@@ -431,6 +440,10 @@ class UserProductController extends Controller
                       }else if(isset($fv1['Mode']['Timer & Impact'])){
                         $count=$count+count($fv1['Mode']['Timer & Impact']['Actual']);
                           $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer & Impact']['Actual'][0]['username'];
+                          $finalId =  Sticker::where('tempId',$fv1['Mode']['Timer & Impact']['Actual'][0]['product_id'])->first();
+                          if ($finalId != null) {
+                            $finalResponse[$frk1][$frk2]['finalId']=$finalId->seriesName.''.$finalId->finalId;;
+                          }
                       }
 
                       $finalResponse[$frk1][$frk2][$fk1]['ActualLength']=$count;
@@ -485,15 +498,20 @@ class UserProductController extends Controller
                	for($i=0; $i<count($finalResponse); $i++){
                  $arr = [];
                  foreach ($finalResponse[$i] as $key => $value) {
+
                     $arr["project_id"] = $key;
 							      $arr["test_cases"] = [];
                     $arr['username'] = $value['username'];
+                    $arr['finalId'] = isset($value['finalId'])?$value['finalId']:'';
                     unset($value['username']);
+                    unset($value['finalId']);
+
                     foreach ($value as $key1 => $value1) {
                       $value1["Mode_data"] = [];
                       foreach ($value1 as $key2 => $value2) {
-    						  			if($key2 == "Mode"){
-                          // unset($value1[$key2]);
+
+    						  			if($key2 == "Mode" && count($value2) >0 ){
+
                           $mode_length = sizeof($value2);
 
 										      $value1["mode_length"] = $mode_length;
@@ -546,7 +564,9 @@ class UserProductController extends Controller
     						  		}
                       array_push($arr["test_cases"],$value1);
                    }
+
                }
+
                array_push($data,$arr);
              }
                $finalResponse = $data;

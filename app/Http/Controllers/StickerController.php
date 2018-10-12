@@ -66,6 +66,44 @@ class StickerController extends Controller
         }
      }
 
+
+     public function stickerPdf($series,$limit,$startIndex)
+     {
+       $limit=$limit==0?1:$limit;
+       $startIndex=$startIndex==0?1:$startIndex;
+       $list=[];
+
+      for ($k = $startIndex; $k <= $limit;$k++) {
+         $arr = array('seriesName' => $series,'finalId' =>str_pad($k, 6, "0", STR_PAD_LEFT) );
+         array_push($list,$arr);
+       }
+
+// return $list;
+      $json=[];
+      $pageSize=35;
+      $count=count($list);
+      $pages=ceil($count/$pageSize);
+            for ($i = 0; $i < $pages;$i++) {
+              $tempArr=[];
+              for ($j = ($i*$pageSize); $j < (($i*$pageSize)+$pageSize); $j++) {
+                if($j<$count){
+                  array_push($tempArr,$list[$j]);
+                }
+              }
+              array_push($json,$tempArr);
+            }
+            // return count($json[0]);
+        if ($count>0) {
+          $now = new DateTime();
+          $now = $now->format('Y-m-d H:i:s');
+          view()->share(compact('json'));
+          $pdf = PDF::loadView('report/sticker')->setPaper('A4', 'landscape');
+          return $pdf->download('sticker_'.$now.'.pdf');
+        } else {
+          return response()->json(['status_code' => 203, 'message' => 'Sticker list not found']);
+        }
+     }
+
     /**
      * Store a newly created resource in storage.
      *

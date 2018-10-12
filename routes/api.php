@@ -62,6 +62,7 @@ $api->version("v1", function($api) {
     $api->post("generateId", "App\Http\Controllers\StickerController@generateId");
     $api->post("get/stickerList", "App\Http\Controllers\StickerController@getStickerList");
     $api->get('stickers/download','App\Http\Controllers\StickerController@download');
+    $api->get('sticker/pdf/download/{series}/{limit}/{startIndex}','App\Http\Controllers\StickerController@stickerPdf');
 
     $api->get("get/seriesList", "App\Http\Controllers\SeriesController@getSeriesList");
 

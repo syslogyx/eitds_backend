@@ -216,7 +216,7 @@ thead { display: table-row-group; }
     @endforeach
     @else
     @foreach ($finalResponse as $key => $value)
-    @if($productId == $value["project_id"])
+    @if(count($value)>0  && $productId == $value["project_id"])
     <div id="export-table">
       <div class="table-responsive wrapping-div">
         <table class=" table table-condensed table-bordered"  id="hidden_table">
