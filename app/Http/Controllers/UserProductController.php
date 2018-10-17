@@ -73,7 +73,7 @@ class UserProductController extends Controller
           $tempdate=new DateTime();
            $json['date']=$tempdate->format('Y-m-d');
 
-
+// return $json;
           $model=UserProduct::create($json);
           if ($model){
             return response()->json(['status_code' => 200, 'message' => 'Test case result added successfully']);
@@ -197,7 +197,21 @@ class UserProductController extends Controller
 
     }
     public function getResult() {
-        $posted_data = Input::all();
+
+      // $allList=DB::select("SELECT DISTINCT product_id, user_id FROM `user_product_assoc`");
+      // $fList=DB::select("SELECT tempId FROM `stickers`");
+      //
+      // for ($i=0; $i < count($allList); $i++) {
+      //   for ($j=0; $j < count($fList) ; $j++) {
+      //
+      //       Sticker::where('tempId', $allList[$i]->product_id)->update(['user_id' => $allList[$i]->user_id]);
+      //       break;
+      //   }
+      // }
+
+      $posted_data = Input::all();
+
+
         $posted_data['status']=2;
         $products= UserProduct::where($posted_data)->get();
 
@@ -219,7 +233,8 @@ class UserProductController extends Controller
             }
             $exist=Sticker::where(['tempId'=>$posted_data['product_id']])->get();
             if(count($exist)==0){
-              Sticker::create(['tempId'=>$posted_data['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId,'id'=>$id]);
+               $userId=UserProduct::where(['product_id'=>$posted_data['product_id']])->pluck('user_id')->last();
+              return Sticker::create(['tempId'=>$posted_data['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId,'id'=>$id,'user_id'=>$userId]);
             }
             return response()->json(['status_code' => 200, 'message' => 'Status', 'status' => 'OK']);
         }
@@ -291,47 +306,151 @@ class UserProductController extends Controller
               $limit=$posted_data['limit'];
               unset($posted_data['limit']);
               $status =!isset($posted_data['status'])?'':$posted_data['status'];
+              $productId =!isset($posted_data['product_id'])?'':$posted_data['product_id'];
               $total=0;
               $lastPage=0;
               $productList='';
               $productIds=array();
+              $finalProducts=[];
+              $tempFinalProducts=[];
+              $date=!isset($posted_data['date'])?'':'"'.$posted_data['date'].'"';
+              if($date==''){
+                $tempFinalProducts=DB::select("SELECT tempId FROM `stickers`");
+              }else{
+                $tempFinalProducts=DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date");
+              }
 
-              if(isset($posted_data['date'])){
-                $date='"'.$posted_data['date'].'"';
+              for ($z=0; $z < count($tempFinalProducts); $z++) {
+                array_push($finalProducts,$tempFinalProducts[$z]->tempId);
+              }
+
+
+              $finalProducts= implode(',', $finalProducts);
+              if(!isset($posted_data['date']) && !isset($posted_data['status']) && !isset($posted_data['product_id']) && !isset($posted_data['user_id'])){
+                $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                $total=count(UserProduct::where($posted_data)->distinct()->pluck('product_id'));
+              }elseif (!isset($posted_data['date']) && isset($posted_data['status']) && !isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
+                if($posted_data['status']==1){
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` ORDER BY created_at DESC LIMIT $limit OFFSET $skip ");
+                    $total=count(DB::select("SELECT tempId FROM `stickers`"));
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND status=$status GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                    $total=count(DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND status=$status"));
+                }
+              }elseif (!isset($posted_data['date']) && !isset($posted_data['status']) && isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
+                $tempProductIds = DB::select("SELECT product_id FROM `user_product_assoc` WHERE product_id = $productId ");
+                $total=count($tempProductIds);
+              }elseif (!isset($posted_data['date']) && isset($posted_data['status']) && isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
+
+                if($posted_data['status']==1){
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` where tempId=$productId");
+
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND product_id=$productId");
+
+                }
+                $total=count($tempProductIds);
+              }elseif (isset($posted_data['date']) && !isset($posted_data['status']) && !isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
 
                 $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc`  WHERE date = $date GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                $total=count(DB::select("SELECT DISTINCT product_id FROM `user_product_assoc`  WHERE date = $date GROUP BY product_id "));
+              }elseif (isset($posted_data['date']) && isset($posted_data['status']) && !isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
 
-              }else if(!isset($posted_data['user_id'])){
-                // $productIds = UserProduct::distinct()->paginate($limit,['product_id'])->pluck('product_id');
-                 $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                if($posted_data['status']==1){
 
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date ORDER BY created_at DESC LIMIT $limit OFFSET $skip");
+                    $total=count(DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date"));
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND date=$date GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                    $total=count(DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND date=$date"));
+                }
+              }elseif (isset($posted_data['date']) && isset($posted_data['status']) && isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
 
+                if($posted_data['status']==1){
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date AND tempId=$productId");
 
-                 // $total=count(UserProduct::distinct()->pluck('product_id'));
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND date=$date AND product_id=$productId ");
 
+                }
+                $total=count($tempProductIds);
+              }elseif (isset($posted_data['date']) && !isset($posted_data['status']) && isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
 
-              }else{
-                 $userId=$posted_data['user_id'];
-                 $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE user_id = $userId GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                $tempProductIds = DB::select("SELECT product_id FROM `user_product_assoc`  WHERE date = $date AND product_id = $productId ");
+                $total=count( DB::select("SELECT product_id FROM `user_product_assoc`  WHERE date = $date AND product_id = $productId "));
+              }elseif(!isset($posted_data['date']) && !isset($posted_data['status']) && !isset($posted_data['product_id']) && isset($posted_data['user_id'])){
+                $userId=(int)$posted_data['user_id'];
+                $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE user_id=$userId GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                $total=count(UserProduct::where($posted_data)->distinct()->pluck('product_id'));
+              }elseif (!isset($posted_data['date']) && isset($posted_data['status']) && !isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
+                if($posted_data['status']==1){
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` WHERE user_id=$userId ORDER BY created_at DESC LIMIT $limit OFFSET $skip ");
+                    $total=count(DB::select("SELECT tempId FROM `stickers` WHERE user_id=$userId"));
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND status=$status AND user_id=$userId GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                    $total=count(DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND status=$status AND user_id=$userId"));
+                }
+              }elseif (!isset($posted_data['date']) && !isset($posted_data['status']) && isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
+                $tempProductIds = DB::select("SELECT product_id FROM `user_product_assoc` WHERE product_id = $productId AND user_id=$userId");
+                $total=count($tempProductIds);
+              }elseif (!isset($posted_data['date']) && isset($posted_data['status']) && isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
+                if($posted_data['status']==1){
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` where tempId=$productId AND user_id=$userId");
 
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND product_id=$productId AND user_id=$userId");
 
+                }
+                $total=count($tempProductIds);
+              }elseif (isset($posted_data['date']) && !isset($posted_data['status']) && !isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
 
+                $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE date = $date AND user_id=$userId GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                $total=count(DB::select("SELECT DISTINCT product_id FROM `user_product_assoc`  WHERE date = $date AND user_id=$userId GROUP BY product_id "));
+              }elseif (isset($posted_data['date']) && isset($posted_data['status']) && !isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
+
+                if($posted_data['status']==1){
+
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date AND user_id=$userId ORDER BY created_at DESC LIMIT $limit OFFSET $skip");
+                    $total=count(DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date AND user_id=$userId"));
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND date=$date AND user_id=$userId GROUP BY product_id ORDER BY MAX(token) DESC LIMIT $limit OFFSET $skip ");
+                    $total=count(DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND date=$date AND user_id=$userId"));
+                }
+              }elseif (isset($posted_data['date']) && isset($posted_data['status']) && isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
+
+                if($posted_data['status']==1){
+                    $tempProductIds = DB::select("SELECT tempId FROM `stickers` where DATE_FORMAT(created_at, '%Y-%m-%d')=$date AND tempId=$productId AND user_id=$userId");
+
+                }else{
+                    $tempProductIds = DB::select("SELECT DISTINCT product_id FROM `user_product_assoc` WHERE product_id NOT IN ($finalProducts) AND date=$date AND product_id=$productId AND user_id=$userId");
+
+                }
+                $total=count($tempProductIds);
+              }elseif (isset($posted_data['date']) && !isset($posted_data['status']) && isset($posted_data['product_id']) && isset($posted_data['user_id'])) {
+                $userId=(int)$posted_data['user_id'];
+
+                $tempProductIds = DB::select("SELECT product_id FROM `user_product_assoc`  WHERE date = $date AND product_id = $productId AND user_id=$userId ");
+                $total=count( DB::select("SELECT product_id FROM `user_product_assoc`  WHERE date = $date AND product_id = $productId AND user_id=$userId"));
               }
-              $total=count(UserProduct::where($posted_data)->distinct()->pluck('product_id'));
+
 
                for ($x = 0; $x < count($tempProductIds); $x++) {
-                 array_push($productIds,$tempProductIds[$x]->product_id);
+                 $val='';
+                 if(isset($tempProductIds[$x]->tempId)){
+                   $val=$tempProductIds[$x]->tempId;
+                 }else{
+                   $val=$tempProductIds[$x]->product_id;
+                 }
+                 array_push($productIds,$val);
                }
 
-              if(!isset($posted_data['product_id'])){
                 $productList=UserProduct::whereIn('product_id',$productIds)->where($posted_data)->get();
-
-              }else{
-                $productList=UserProduct::where($posted_data)->get();
-                $total=1;
-
-              }
-
 
              if (count($productList)>0){
 
@@ -417,9 +536,15 @@ class UserProductController extends Controller
                       }else if(isset($fv1['Mode']['Timer'])){
                         $count=$count+count($fv1['Mode']['Timer']['Actual']);
                           $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer']['Actual'][0]['username'];
-                          $finalId =  Sticker::where('tempId',$fv1['Mode']['Timer']['Actual'][0]['product_id'])->first();
-                          if ($finalId != null) {
-                            $finalResponse[$frk1][$frk2]['finalId']=$finalId->seriesName.''.$finalId->finalId;;
+                           $tempId=$fv1['Mode']['Timer']['Actual'][0]['product_id'];
+
+                          $date='"'.$fv1['Mode']['Timer']['Actual'][0]['date'].'"';
+                          // $finalId =  Sticker::where(['tempId'=>,''])->first();
+
+                          $finalId=DB::select("SELECT * FROM `stickers` WHERE tempId = $tempId AND DATE_FORMAT(created_at, '%Y-%m-%d') = $date");
+
+                          if (count($finalId)>0) {
+                            $finalResponse[$frk1][$frk2]['finalId']=$finalId[0]->seriesName.''.$finalId[0]->finalId;;
                           }
 
                       }
@@ -429,9 +554,16 @@ class UserProductController extends Controller
                       }else if(isset($fv1['Mode']['Impact'])){
                         $count=$count+count($fv1['Mode']['Impact']['Actual']);
                         $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Impact']['Actual'][0]['username'];
-                        $finalId =  Sticker::where('tempId',$fv1['Mode']['Impact']['Actual'][0]['product_id'])->first();
-                        if ($finalId != null) {
-                          $finalResponse[$frk1][$frk2]['finalId']=$finalId->seriesName.''.$finalId->finalId;
+                        $tempId=$fv1['Mode']['Impact']['Actual'][0]['product_id'];
+
+                       $date='"'.$fv1['Mode']['Impact']['Actual'][0]['date'].'"';
+                       // $finalId =  Sticker::where(['tempId'=>,''])->first();
+
+                       $finalId=DB::select("SELECT * FROM `stickers` WHERE tempId = $tempId AND DATE_FORMAT(created_at, '%Y-%m-%d') = $date");
+
+
+                        if (count($finalId)>0) {
+                          $finalResponse[$frk1][$frk2]['finalId']=$finalId[0]->seriesName.''.$finalId[0]->finalId;;
                         }
                       }
 
@@ -440,9 +572,15 @@ class UserProductController extends Controller
                       }else if(isset($fv1['Mode']['Timer & Impact'])){
                         $count=$count+count($fv1['Mode']['Timer & Impact']['Actual']);
                           $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer & Impact']['Actual'][0]['username'];
-                          $finalId =  Sticker::where('tempId',$fv1['Mode']['Timer & Impact']['Actual'][0]['product_id'])->first();
-                          if ($finalId != null) {
-                            $finalResponse[$frk1][$frk2]['finalId']=$finalId->seriesName.''.$finalId->finalId;;
+                          $tempId=$fv1['Mode']['Timer & Impact']['Actual'][0]['product_id'];
+
+                         $date='"'.$fv1['Mode']['Timer & Impact']['Actual'][0]['date'].'"';
+                         // $finalId =  Sticker::where(['tempId'=>,''])->first();
+
+                         $finalId=DB::select("SELECT * FROM `stickers` WHERE tempId = $tempId AND DATE_FORMAT(created_at, '%Y-%m-%d') = $date");
+
+                          if (count($finalId)>0) {
+                            $finalResponse[$frk1][$frk2]['finalId']=$finalId[0]->seriesName.''.$finalId[0]->finalId;;
                           }
                       }
 

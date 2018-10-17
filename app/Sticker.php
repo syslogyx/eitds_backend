@@ -12,13 +12,14 @@ use Illuminate\Notifications\Notifiable;
 class Sticker extends Model
 {
   protected $fillable = [
-      "tempId","seriesName","finalId",  "id"
+      "tempId","seriesName","finalId",  "id","user_id"
   ];
   private $rules = array(
       "tempId"=> 'required',
       "seriesName"=> 'required',
       "finalId" => 'required',
-      "id" => 'required'
+      "id" => 'required',
+      "user_id" => 'required'
   );
   protected $table = 'stickers';
   protected $guarded = [ 'created_at', 'updated_at'];
