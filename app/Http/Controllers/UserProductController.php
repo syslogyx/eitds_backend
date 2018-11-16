@@ -234,7 +234,7 @@ class UserProductController extends Controller
             $exist=Sticker::where(['tempId'=>$posted_data['product_id']])->get();
             if(count($exist)==0){
                $userId=UserProduct::where(['product_id'=>$posted_data['product_id']])->pluck('user_id')->last();
-              return Sticker::create(['tempId'=>$posted_data['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId,'id'=>$id,'user_id'=>$userId]);
+              Sticker::create(['tempId'=>$posted_data['product_id'],'seriesName'=>$seriesName,'finalId'=>$finalId,'id'=>$id,'user_id'=>$userId]);
             }
             return response()->json(['status_code' => 200, 'message' => 'Status', 'status' => 'OK']);
         }
@@ -339,7 +339,7 @@ class UserProductController extends Controller
                 }
               }elseif (!isset($posted_data['date']) && !isset($posted_data['status']) && isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
                 $tempProductIds = DB::select("SELECT product_id FROM `user_product_assoc` WHERE product_id = $productId ");
-                $total=count($tempProductIds);
+                $total=1;
               }elseif (!isset($posted_data['date']) && isset($posted_data['status']) && isset($posted_data['product_id']) && !isset($posted_data['user_id'])) {
 
                 if($posted_data['status']==1){
@@ -526,7 +526,7 @@ class UserProductController extends Controller
                   }
                 }
 
-
+// return $finalResponse;
                 foreach ( $finalResponse as $frk1 => $frv1) {
                   foreach ( $frv1 as $frk2 => $FIXED_COL) {
                     foreach ( $FIXED_COL as $fk1 => $fv1) {
@@ -535,10 +535,10 @@ class UserProductController extends Controller
                         unset($finalResponse[$frk1][$frk2][$fk1]['Mode']['Timer']);
                       }else if(isset($fv1['Mode']['Timer'])){
                         $count=$count+count($fv1['Mode']['Timer']['Actual']);
-                          $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer']['Actual'][0]['username'];
-                           $tempId=$fv1['Mode']['Timer']['Actual'][0]['product_id'];
+                          $finalResponse[$frk1][$frk2]['username']=$fv1['Mode']['Timer']['Actual'][$count-1]['username'];
+                           $tempId=$fv1['Mode']['Timer']['Actual'][$count-1]['product_id'];
 
-                          $date='"'.$fv1['Mode']['Timer']['Actual'][0]['date'].'"';
+                          $date='"'.$fv1['Mode']['Timer']['Actual'][$count-1]['date'].'"';
                           // $finalId =  Sticker::where(['tempId'=>,''])->first();
 
                           $finalId=DB::select("SELECT * FROM `stickers` WHERE tempId = $tempId AND DATE_FORMAT(created_at, '%Y-%m-%d') = $date");
