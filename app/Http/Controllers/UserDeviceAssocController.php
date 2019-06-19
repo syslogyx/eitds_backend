@@ -67,7 +67,7 @@ class UserDeviceAssocController extends BaseController {
         }
     }
 
-    public function getDeviceIdByUserId($id) {
+    public function getDeviceIdByUserIdOld($id) {
 
         $user = UserDeviceAssoc::where("user_id",$id)->latest()->first();
         if ($user){
@@ -78,6 +78,21 @@ class UserDeviceAssocController extends BaseController {
           return response()->json(['status_code' => 404, 'message' => 'Record not found']);
         }
     }
+
+    public function getDeviceIdByUserId($id) {
+
+        $user = UserDeviceAssoc::with(array('Device.deviceInfo'=>function($query)use ($id){
+        $query->where('user_id',$id)->latest()->first();
+                }))->where("user_id",$id)->latest()->first();
+        if ($user){
+
+          $user['device_name']=$user['device']['device_id'];
+          return response()->json(['status_code' => 200, 'message' => 'User info', 'data' => $user]);
+        }else{
+          return response()->json(['status_code' => 404, 'message' => 'Record not found']);
+        }
+    }
+
     public function resetDeviceById($id) {
       $device = Device::where('id',  $id)
       ->update(['status' =>'NOT ENGAGE']);
@@ -96,6 +111,21 @@ class UserDeviceAssocController extends BaseController {
           return response()->json(['status_code' => 404, 'message' => 'Device unable to reset.']);
         }
     }
+
+    public function getDeviceUserInfo() {
+
+      //  return UserDeviceAssoc::with("User.userInfo","Device")->where('user_id',75)->get();
+
+        return UserDeviceAssoc::with(array('User.userInfo'=>function($query){
+                $query->where('user_id',75);
+              }))->with(array('Device.deviceInfo'=>function($query){
+                $query->where('user_id',75);
+              }))->where('user_id',75)->get();
+
+
+    }
+
+
 
 
 

@@ -29,5 +29,12 @@ class UserDeviceAssoc extends Model {
         return $this->errors;
     }
 
+    public function device() {
+      return $this->belongsTo('App\Device');
+    }
+    public function user() {
+      return $this->belongsTo('App\User');
+    }
+
 
 }

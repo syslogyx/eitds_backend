@@ -44,7 +44,9 @@ $api->version("v1", function($api) {
     $api->post("assign/deviceToUser", "App\Http\Controllers\UserDeviceAssocController@assignDeviceToUser");
     $api->get("get/userIdByDeviceId/{id}", "App\Http\Controllers\UserDeviceAssocController@getUserIdByDeviceId");
     $api->get("get/deviceIdByUserId/{id}", "App\Http\Controllers\UserDeviceAssocController@getDeviceIdByUserId");
+    $api->get("get/deviceIdByUserIdTest/{id}", "App\Http\Controllers\UserDeviceAssocController@getDeviceIdByUserIdTest");
     $api->get("reset/deviceById/{id}", "App\Http\Controllers\UserDeviceAssocController@resetDeviceById");
+    $api->get("getAllDeviceUserInfo", "App\Http\Controllers\UserDeviceAssocController@getDeviceUserInfo");
 
     // user and product assoc api
     $api->post("add/testCaseResult", "App\Http\Controllers\UserProductController@addTestCaseResult");

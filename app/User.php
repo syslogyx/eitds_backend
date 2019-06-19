@@ -56,6 +56,8 @@ class User extends Authenticatable {
       return $this->belongsTo('App\Role')->select(array('id', 'name'));
     }
 
-
+    public function userInfo() {
+      return $this->hasMany('App\UserDeviceAssoc','user_id');
+    }
 
 }

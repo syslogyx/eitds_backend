@@ -27,5 +27,8 @@ class Device extends Model {
   public function errors() {
       return $this->errors;
   }
+  public function deviceInfo() {
+    return $this->hasMany('App\UserDeviceAssoc','device_id');
+  }
 
 }

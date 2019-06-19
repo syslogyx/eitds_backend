@@ -215,6 +215,8 @@ class UserProductController extends Controller
         $posted_data['status']=2;
         $products= UserProduct::where($posted_data)->get();
 
+        sleep(mt_rand(0,5));
+
         if(count($products)>0){
 
           return response()->json(['status_code' => 202, 'message' => 'Status', 'status' => 'NOT OK']);
