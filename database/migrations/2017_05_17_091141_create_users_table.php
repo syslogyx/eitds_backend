@@ -36,6 +36,12 @@ class CreateUsersTable extends Migration
             "email" => "operator@syslogyx.com",
             "password" => Hash::make('operator123'),
             "role_id" => 2,
+            ),
+			array(
+            "name" => "Sticker",
+            "email" => "sticker@syslogyx.com",
+            "password" => Hash::make('sticker123'),
+            "role_id" => 3,
             )
         );
 
