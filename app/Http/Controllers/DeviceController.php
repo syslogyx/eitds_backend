@@ -30,18 +30,21 @@ class DeviceController extends BaseController {
              }
 
         } else {
-            throw new \Dingo\Api\Exception\StoreResourceFailedException('Unable to create device.', $object->errors());
+          return response()->json(['status_code' => 422, 'message' =>'Unable to update device', 'error' => $object->errors()]);
+            // throw new \Dingo\Api\Exception\StoreResourceFailedException('Unable to create device.', $object->errors());
         }
     }
     public function updateDevice() {
       $posted_data = Input::all();
-
-      $object = new Device();
+      $object = Device::find($posted_data['id']);
+      // $object = new Device();
+      // return $object->validate($posted_data);
       if ($object->validate($posted_data)) {
-            $device = Device::where("device_id",$posted_data['device_id'])->first();
-            if ($device){
-               return response()->json(['status_code' => 201, 'message' => 'Device already created']);
-            }else{
+            // $device = Device::where("device_id",$posted_data['device_id'])->first();
+            // return $device;
+            // if ($device){
+            //    return response()->json(['status_code' => 201, 'message' => 'Device already created']);
+            // }else{
               $device = Device::where('id',$posted_data['id'])->update($posted_data);
               if($device){
                 $res = Device::find($posted_data['id']);
@@ -49,9 +52,10 @@ class DeviceController extends BaseController {
               }else{
                 return response()->json(['status_code' => 404, 'message' => 'Device not found']);
               }
-            }
+            // }
       } else {
-          throw new \Dingo\Api\Exception\StoreResourceFailedException('Unable to update device.', $object->errors());
+        return response()->json(['status_code' => 422, 'message' =>'Unable to update device', 'error' => $object->errors()]);
+          // throw new \Dingo\Api\Exception\StoreResourceFailedException('Unable to update device.', $object->errors());
       }
     }
     public function getDevices() {

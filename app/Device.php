@@ -10,18 +10,27 @@ class Device extends Model {
   protected $table = 'devices';
   protected $guarded = ['id','created_at', 'updated_at'];
   private $rules = array(
-      'device_id' => 'required:unique:devices,device_id'
+      'device_id' => 'required|unique:devices,device_id,'
+      
   );
 
   private $errors;
 
   public function validate($data) {
+
+      if ($this->id) {
+        $this->rules['device_id'] .= $this->id;
+      }
+      // return $this->rules;
+
       $validator = Validator::make($data, $this->rules);
       if ($validator->fails()) {
           $this->errors = $validator->errors();
           return false;
       }
       return true;
+
+      
   }
 
   public function errors() {
